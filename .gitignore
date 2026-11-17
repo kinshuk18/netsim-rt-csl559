@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv
+venv/
+ENV/
+
+# Data files (Hard rule: keep raw traces out of git)
+data/raw/
+data/cache/
+*.parquet
+*.gz
+*.pcap
+*.log
+
+# Results and temp files
+results/tmp/
+*.duckdb
+*.db
+*.sqlite
+
+# Node / Frontend
+node_modules/
+frontend/dist/
+frontend/node_modules/
+.npm
+.eslintcache
+
+# Environment & Secrets (NEVER commit credentials)
+.env
+*.pem
+*.key
+
+# IDE / System
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+.coverage
+htmlcov/
+.pytest_cache/
