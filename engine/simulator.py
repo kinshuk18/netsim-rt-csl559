@@ -41,6 +41,21 @@ class Simulator:
         self.client_timeout = config.client_timeout
         self.slo_target = config.slo_target_s
 
+        self.is_central = (config.load_balancer in ("central_queue", "none", None, ""))
+        if not self.is_central:
+            self.server_queues = [
+                get_policy(config.policy, quantum=config.time_quantum)
+                for _ in range(self.num_servers)
+            ]
+            self._rr_idx = 0
+            self.rng = np.random.default_rng(config.seed)
+        else:
+            self.server_queues = []
+
+        self.admission_policy = config.admission_policy
+        self.token_bucket_tokens = float(config.token_bucket_capacity)
+        self.last_token_refill = 0.0
+
         # Event heap: list of tuples (event_time, event_id, event_type, payload)
         self.event_heap: List[Tuple[float, int, int, Any]] = []
         self._event_counter = 0
@@ -62,6 +77,11 @@ class Simulator:
         self.last_sample_time = 0.0
         self.sample_interval = 1.0  # Will be adjusted after loading trace
 
+    def _current_queue_length(self) -> int:
+        if self.is_central:
+            return self.policy.queue_length()
+        return sum(q.queue_length() for q in self.server_queues)
+
     def _push_event(self, event_time: float, event_type: int, payload: Any):
         self._event_counter += 1
         heapq.heappush(self.event_heap, (event_time, self._event_counter, event_type, payload))
@@ -69,7 +89,7 @@ class Simulator:
     def _update_time_weighted_stats(self, next_time: float):
         delta = next_time - self.last_state_change_time
         if delta > 0.0:
-            q_len = self.policy.queue_length()
+            q_len = self._current_queue_length()
             busy_cnt = self.num_servers - len(self.idle_servers)
             self.area_queue_length += q_len * delta
             self.area_busy_servers += busy_cnt * delta
@@ -82,7 +102,7 @@ class Simulator:
             self.last_sample_time = self.now
             busy_cnt = self.num_servers - len(self.idle_servers)
             util = busy_cnt / float(self.num_servers)
-            q_len = self.policy.queue_length()
+            q_len = self._current_queue_length()
             self.timeline_samples.append({
                 "time_s": round(self.now, 2),
                 "queue_depth": q_len,
@@ -175,44 +195,84 @@ class Simulator:
         return self._compute_results(real_elapsed, processed_events)
 
     def _handle_arrival(self, req: Request):
-        # Drop-tail queue limit check
-        if self.policy.queue_length() >= self.queue_capacity:
-            req.dropped = True
-            return
+        # Admission control
+        if self.admission_policy == "none":
+            pass
+        elif self.admission_policy == "token_bucket":
+            elapsed = self.now - self.last_token_refill
+            if elapsed > 0.0:
+                self.token_bucket_tokens = min(
+                    float(self.config.token_bucket_capacity),
+                    self.token_bucket_tokens + elapsed * self.config.token_bucket_rate
+                )
+                self.last_token_refill = self.now
+            if self.token_bucket_tokens >= 1.0:
+                self.token_bucket_tokens -= 1.0
+            else:
+                req.dropped = True
+                return
+        else:  # drop-tail
+            if self._current_queue_length() >= self.queue_capacity:
+                req.dropped = True
+                return
 
         # Schedule client timeout event
         if self.client_timeout > 0:
             timeout_time = self.now + self.client_timeout
             self._push_event(timeout_time, EVENT_TIMEOUT, req)
 
-        # Check for idle server
-        if self.idle_servers:
-            server_id = self.idle_servers.pop(0)
-            self._dispatch_to_server(req, server_id)
+        if self.is_central:
+            # Central queue multi-server dispatch
+            if self.idle_servers:
+                server_id = self.idle_servers.pop(0)
+                self._dispatch_to_server(req, server_id)
+            else:
+                preempted = False
+                if self.policy.is_preemptive:
+                    worst_server = -1
+                    worst_rem = req.remaining_time
+                    for s_id, act_req in self.active_requests.items():
+                        if self.policy.should_preempt(act_req, req):
+                            if act_req.remaining_time > worst_rem:
+                                worst_rem = act_req.remaining_time
+                                worst_server = s_id
+                    if worst_server >= 0:
+                        preempted = True
+                        victim = self.active_requests[worst_server]
+                        self.policy.add_request(victim, self.now)
+                        victim.context_switches += 1
+                        self._dispatch_to_server(req, worst_server)
+                if not preempted:
+                    self.policy.add_request(req, self.now)
         else:
-            # Check preemptive scheduling (e.g. SRTF)
-            preempted = False
-            if self.policy.is_preemptive:
-                # Find server with highest remaining time job
-                worst_server = -1
-                worst_rem = req.remaining_time
-                for s_id, act_req in self.active_requests.items():
-                    if self.policy.should_preempt(act_req, req):
-                        if act_req.remaining_time > worst_rem:
-                            worst_rem = act_req.remaining_time
-                            worst_server = s_id
-                            
-                if worst_server >= 0:
-                    preempted = True
-                    victim = self.active_requests[worst_server]
-                    # Put victim back into policy queue
-                    self.policy.add_request(victim, self.now)
-                    victim.context_switches += 1
-                    # Dispatch new request to that server
-                    self._dispatch_to_server(req, worst_server)
+            # Multi-queue with load balancer
+            lb = self.config.load_balancer
+            if lb == "round_robin":
+                chosen = self._rr_idx
+                self._rr_idx = (self._rr_idx + 1) % self.num_servers
+            elif lb == "random":
+                chosen = int(self.rng.integers(0, self.num_servers))
+            elif lb == "join_shortest_queue":
+                chosen = min(
+                    range(self.num_servers),
+                    key=lambda s: (1 if s in self.active_requests else 0) + self.server_queues[s].queue_length()
+                )
+            elif lb == "power_of_two":
+                if self.num_servers > 1:
+                    c1, c2 = self.rng.choice(self.num_servers, size=2, replace=False)
+                    load1 = (1 if c1 in self.active_requests else 0) + self.server_queues[c1].queue_length()
+                    load2 = (1 if c2 in self.active_requests else 0) + self.server_queues[c2].queue_length()
+                    chosen = int(c1 if load1 <= load2 else c2)
+                else:
+                    chosen = 0
+            else:
+                chosen = 0
 
-            if not preempted:
-                self.policy.add_request(req, self.now)
+            if chosen in self.idle_servers:
+                self.idle_servers.remove(chosen)
+                self._dispatch_to_server(req, chosen)
+            else:
+                self.server_queues[chosen].add_request(req, self.now)
 
     def _dispatch_to_server(self, req: Request, server_id: int):
         if req.start_time < 0.0:
@@ -221,9 +281,10 @@ class Simulator:
         self.active_requests[server_id] = req
 
         # Check if policy uses quantum slicing (RR, MLFQ, PS)
-        quantum = getattr(self.policy, "quantum", None)
-        if hasattr(self.policy, "get_quantum"):
-            quantum = self.policy.get_quantum(req)
+        policy_obj = self.policy if self.is_central else self.server_queues[server_id]
+        quantum = getattr(policy_obj, "quantum", None)
+        if hasattr(policy_obj, "get_quantum"):
+            quantum = policy_obj.get_quantum(req)
 
         if quantum is not None and req.remaining_time > quantum:
             # Quantum event
@@ -246,9 +307,10 @@ class Simulator:
         del self.active_requests[server_id]
 
         # Allocate server to next waiting request from policy
-        next_req = self.policy.select_next(self.now)
+        policy_obj = self.policy if self.is_central else self.server_queues[server_id]
+        next_req = policy_obj.select_next(self.now)
         while next_req and (next_req.dropped or next_req.timed_out):
-            next_req = self.policy.select_next(self.now)
+            next_req = policy_obj.select_next(self.now)
 
         if next_req:
             self._dispatch_to_server(next_req, server_id)
@@ -264,12 +326,13 @@ class Simulator:
         del self.active_requests[server_id]
 
         # Return request to policy
-        self.policy.on_quantum_expired(req, self.now)
+        policy_obj = self.policy if self.is_central else self.server_queues[server_id]
+        policy_obj.on_quantum_expired(req, self.now)
 
         # Select next request
-        next_req = self.policy.select_next(self.now)
+        next_req = policy_obj.select_next(self.now)
         while next_req and (next_req.dropped or next_req.timed_out):
-            next_req = self.policy.select_next(self.now)
+            next_req = policy_obj.select_next(self.now)
 
         if next_req:
             self._dispatch_to_server(next_req, server_id)
@@ -278,8 +341,27 @@ class Simulator:
 
     def _handle_timeout(self, req: Request):
         # If still in queue (has not started service), flag timed out
-        if req.start_time < 0.0 and not req.dropped:
+        if req.start_time < 0.0 and not req.dropped and not req.timed_out:
             req.timed_out = True
+            if self.config.retry_on_timeout and req.retries < self.config.max_retries:
+                retry_count = req.retries + 1
+                backoff = self.config.backoff_base_s * (self.config.backoff_multiplier ** (retry_count - 1))
+                retry_time = self.now + backoff
+                retry_req = Request(
+                    id=len(self.all_requests),
+                    arrival_time=retry_time,
+                    service_time=req.service_time,
+                    remaining_time=req.service_time,
+                    req_class=req.req_class,
+                    path_group=req.path_group,
+                    bytes=req.bytes,
+                    status=req.status,
+                    deadline=retry_time + self.slo_target,
+                    priority=req.priority,
+                    retries=retry_count
+                )
+                self.all_requests.append(retry_req)
+                self._push_event(retry_time, EVENT_ARRIVAL, retry_req)
 
     def _compute_results(self, real_elapsed: float, processed_events: int) -> SimulationResult:
         sim_duration = max(0.001, self.now)

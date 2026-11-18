@@ -31,6 +31,7 @@ class Request:
     dropped: bool = False
     timed_out: bool = False
     context_switches: int = 0
+    retries: int = 0
 
     @property
     def latency(self) -> float:
@@ -58,6 +59,14 @@ class SimulationConfig:
     load_multiplier: float = 1.0     # Time-compression factor (offered load scaling)
     client_timeout: float = 30.0     # Client timeout in seconds
     slo_target_s: float = 0.500      # 500ms SLO target
+    load_balancer: str = "central_queue"  # central_queue, round_robin, random, join_shortest_queue, power_of_two
+    admission_policy: str = "drop_tail"   # none, drop_tail, token_bucket
+    token_bucket_rate: float = 1000.0     # tokens/sec for token_bucket
+    token_bucket_capacity: float = 100.0  # max bucket depth
+    retry_on_timeout: bool = False
+    max_retries: int = 0
+    backoff_base_s: float = 0.5
+    backoff_multiplier: float = 2.0
     seed: int = 42
     max_requests: Optional[int] = None
     window_start_s: Optional[float] = None

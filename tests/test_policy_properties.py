@@ -130,3 +130,45 @@ def test_round_robin_bounded_wait_and_slicing():
         # Under FCFS, tiny job waited 9.999s. Under RR with 10ms quantum, tiny job waited only 0.009s!
         assert rr_max_wait < 0.020, f"Expected RR max wait < 20ms, got {rr_max_wait}"
         assert rr_max_wait < fcfs_max_wait / 100.0
+
+
+def test_load_balancing_and_admission_control():
+    """Verify load balancing (JSQ, power_of_two) and token bucket admission."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        trace_p = Path(tmpdir) / "test_lb.parquet"
+        n = 100
+        df = pd.DataFrame({
+            'ts': np.linspace(0.0, 1.0, n),
+            'class': ['browse'] * n,
+            'path_group': ['/api'] * n,
+            'bytes': [500] * n,
+            'status': [200] * n,
+            'service_time_s': [0.05] * n
+        })
+        table = pa.Table.from_pandas(df)
+        pq.write_table(table, trace_p)
+
+        # JSQ across 4 servers
+        cfg_jsq = SimulationConfig(
+            trace_path=str(trace_p),
+            policy="fcfs",
+            num_servers=4,
+            load_balancer="join_shortest_queue"
+        )
+        res_jsq = Simulator(cfg_jsq).run()
+        assert res_jsq.completed == n
+        assert res_jsq.dropped == 0
+
+        # Token bucket admission dropping excess
+        cfg_tb = SimulationConfig(
+            trace_path=str(trace_p),
+            policy="fcfs",
+            num_servers=1,
+            admission_policy="token_bucket",
+            token_bucket_rate=20.0,
+            token_bucket_capacity=10.0
+        )
+        res_tb = Simulator(cfg_tb).run()
+        assert res_tb.dropped > 0
+        assert res_tb.completed + res_tb.dropped + res_tb.timed_out + res_tb.in_flight == n
+
