@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NetSim-RT | Real Traffic Discrete-Event Simulator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="vendor/echarts.min.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-pill">CSL559</div>
+      <div>
+        <h1>NetSim-RT</h1>
+        <p class="subtitle">Trace-Driven Real-Traffic Simulator & Policy Benchmark &bull; IIT Bhilai</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="badge badge-success" id="server-status">Connecting...</span>
+      <span class="badge badge-outline">Panel Demo: 20 Nov 2026</span>
+    </div>
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="presets-tab">⚡ Presets</button>
+    <button class="tab-btn" data-tab="simulator-tab">🔬 Simulator</button>
+    <button class="tab-btn" data-tab="sweep-tab">📈 Load Sweep & Knee</button>
+    <button class="tab-btn" data-tab="shootout-tab">🏆 Policy Shootout</button>
+    <button class="tab-btn" data-tab="custom-tab">💻 Custom Policy Sandbox</button>
+    <button class="tab-btn" data-tab="datasets-tab">📊 Real Traces Explorer</button>
+  </nav>
+
+  <main class="main-container">
+    <!-- TAB 1: PRESETS -->
+    <section id="presets-tab" class="tab-content active">
+      <div class="section-header">
+        <h2>Precomputed Demonstration Presets</h2>
+        <p>Instantaneous evaluation of real-world scenarios loaded from disk in &lt;1 second.</p>
+      </div>
+      <div class="presets-grid" id="presets-list">
+        <!-- Rendered dynamically -->
+      </div>
+      <div id="preset-view-container" class="card mt-4 hidden">
+        <div class="card-header">
+          <h3 id="preset-view-title">Preset Results</h3>
+          <span class="badge badge-primary" id="preset-view-type">Shootout</span>
+        </div>
+        <p id="preset-view-desc" class="text-muted"></p>
+        <div id="preset-chart" class="chart-box"></div>
+        <div class="chart-caption" id="preset-chart-caption"></div>
+        <div id="preset-table-container" class="mt-4"></div>
+      </div>
+    </section>
+
+    <!-- TAB 2: SIMULATOR -->
+    <section id="simulator-tab" class="tab-content">
+      <div class="section-header">
+        <h2>Interactive Discrete-Event Simulator</h2>
+        <p>Replay real production traces through multi-server queues with scheduling and admission policies.</p>
+      </div>
+      <div class="grid-2-col">
+        <div class="card form-card">
+          <h3>Simulation Parameters</h3>
+          <form id="sim-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Dataset Trace</label>
+                <select id="sim-trace" class="form-control">
+                  <option value="epa">EPA Web Server (1995)</option>
+                  <option value="nasa_jul95">NASA Kennedy Space Ctr (Jul 95)</option>
+                  <option value="nasa_aug95">NASA Hurricane Erin (Aug 95)</option>
+                  <option value="sdsc">SDSC Web Server (1995)</option>
+                  <option value="clarknet">ClarkNet ISP (1995)</option>
+                  <option value="azure">Azure Functions (2021)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Scheduling Policy</label>
+                <select id="sim-policy" class="form-control">
+                  <option value="fcfs">FCFS (First-Come First-Served)</option>
+                  <option value="sjf">SJF (Shortest Job First)</option>
+                  <option value="srtf">SRTF (Shortest Remaining Time First - Preemptive)</option>
+                  <option value="rr">Round Robin (Time Slicing)</option>
+                  <option value="static_priority">Priority (Book > Browse)</option>
+                  <option value="mlfq">MLFQ (Multi-Level Feedback Queue)</option>
+                  <option value="wfq">WFQ (Weighted Fair Queueing)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Worker Servers (c)</label>
+                <input type="number" id="sim-servers" class="form-control" value="4" min="1" max="32">
+              </div>
+              <div class="form-group">
+                <label>Load Multiplier (&lambda; scale)</label>
+                <input type="number" id="sim-load" class="form-control" value="1.0" min="0.1" max="100.0" step="0.1">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Load Balancer</label>
+                <select id="sim-lb" class="form-control">
+                  <option value="central_queue">Central Queue (M/G/c)</option>
+                  <option value="round_robin">Round Robin</option>
+                  <option value="join_shortest_queue">Join Shortest Queue (JSQ)</option>
+                  <option value="power_of_two">Power of Two Choices (SQ2)</option>
+                  <option value="random">Random</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Admission Policy</label>
+                <select id="sim-admission" class="form-control">
+                  <option value="drop_tail">Drop-Tail Queue Limit</option>
+                  <option value="token_bucket">Token Bucket Rate Limiter</option>
+                  <option value="none">None (Infinite Buffer)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Queue Capacity</label>
+                <input type="number" id="sim-queue-cap" class="form-control" value="50000" min="10">
+              </div>
+              <div class="form-group">
+                <label>SLO Target (ms)</label>
+                <input type="number" id="sim-slo" class="form-control" value="500" min="10">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Max Request Count (Window Cap)</label>
+                <input type="number" id="sim-max-req" class="form-control" value="5000" min="100" max="200000">
+              </div>
+              <div class="form-group">
+                <label>Client Timeout (s)</label>
+                <input type="number" id="sim-timeout" class="form-control" value="30.0" min="0.1" step="0.5">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" id="btn-run-sim">Run Simulation</button>
+          </form>
+        </div>
+
+        <div class="card metrics-card">
+          <h3>Performance Metrics</h3>
+          <div class="metrics-grid" id="sim-metrics">
+            <div class="metric-box"><div class="label">Throughput</div><div class="val" id="m-thr">-</div><div class="sub">req/s</div></div>
+            <div class="metric-box"><div class="label">Goodput (SLO)</div><div class="val" id="m-goodput">-</div><div class="sub">req/s</div></div>
+            <div class="metric-box"><div class="label">p50 Latency</div><div class="val" id="m-p50">-</div><div class="sub">ms</div></div>
+            <div class="metric-box"><div class="label">p99 Latency</div><div class="val" id="m-p99">-</div><div class="sub">ms</div></div>
+            <div class="metric-box"><div class="label">Server Utilization</div><div class="val" id="m-util">-</div><div class="sub">%</div></div>
+            <div class="metric-box"><div class="label">Jain's Fairness</div><div class="val" id="m-jain">-</div><div class="sub">index [0-1]</div></div>
+            <div class="metric-box"><div class="label">Drop Rate</div><div class="val" id="m-drop">-</div><div class="sub">%</div></div>
+            <div class="metric-box"><div class="label">Max Wait (Starvation)</div><div class="val" id="m-maxwait">-</div><div class="sub">ms</div></div>
+          </div>
+          <div class="sim-speed mt-3 text-muted" id="sim-runtime">Simulation events: -</div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <h3>Queue Depth & Server Activity Timeline</h3>
+        <div id="sim-timeline-chart" class="chart-box"></div>
+        <div class="chart-caption">What am I looking at: Sampled time-series showing instantaneous pending queue depth and active busy servers during trace replay.</div>
+      </div>
+    </section>
+
+    <!-- TAB 3: LOAD SWEEP & KNEE -->
+    <section id="sweep-tab" class="tab-content">
+      <div class="section-header">
+        <h2>Phase Transition Analysis: Knee, Inflection & Breaking Points</h2>
+        <p>Logarithmic load sweep (&lambda; &times; 0.1x to 400x) identifying system stability boundaries.</p>
+      </div>
+
+      <div class="card form-card mb-4">
+        <form id="sweep-form" class="form-inline">
+          <div class="form-group">
+            <label>Trace</label>
+            <select id="sweep-trace" class="form-control">
+              <option value="epa">EPA Web Server</option>
+              <option value="nasa_jul95">NASA July</option>
+              <option value="nasa_aug95">NASA August</option>
+              <option value="azure">Azure Functions</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Policy</label>
+            <select id="sweep-policy" class="form-control">
+              <option value="fcfs">FCFS</option>
+              <option value="sjf">SJF</option>
+              <option value="rr">Round Robin</option>
+              <option value="static_priority">Priority</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Servers (c)</label>
+            <input type="number" id="sweep-servers" class="form-control" value="1" min="1" max="16">
+          </div>
+          <div class="form-group">
+            <label>Points</label>
+            <input type="number" id="sweep-points" class="form-control" value="25" min="10" max="35">
+          </div>
+          <button type="submit" class="btn btn-primary" id="btn-run-sweep">Run Load Sweep</button>
+        </form>
+      </div>
+
+      <div class="special-points-grid" id="special-points-cards">
+        <div class="point-card knee-card">
+          <div class="point-badge">KNEE POINT</div>
+          <div class="point-val" id="pt-knee-val">Offered: -</div>
+          <div class="point-sub" id="pt-knee-sub">&rho; = -, p99 = - ms</div>
+          <div class="point-desc">Maximum curvature on convex latency curve (Kneedle algorithm). Onset of non-linear queueing expansion.</div>
+        </div>
+        <div class="point-card inflection-card">
+          <div class="point-badge">INFLECTION POINT</div>
+          <div class="point-val" id="pt-inf-val">Offered: -</div>
+          <div class="point-sub" id="pt-inf-sub">&rho; = -, p99 = - ms</div>
+          <div class="point-desc">Sign change of second derivative (d&sup2;y/dx&sup2; = 0). Transition from accelerating queue delay to queue saturation.</div>
+        </div>
+        <div class="point-card breaking-card">
+          <div class="point-badge">BREAKING POINT</div>
+          <div class="point-val" id="pt-break-val">Offered: -</div>
+          <div class="point-sub" id="pt-break-sub">&rho; = -, p99 = - ms</div>
+          <div class="point-desc">First offered load where p99 &gt; 500ms SLO or goodput &lt; 95% offered load. System capacity collapse.</div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <h3>p99 Latency vs Offered Load Curve</h3>
+        <div id="sweep-latency-chart" class="chart-box"></div>
+        <div class="chart-caption">What am I looking at: Log-scaled tail latency curve with annotated Knee (green), Inflection (orange), and Breaking Point (red).</div>
+      </div>
+
+      <div class="card mt-4">
+        <h3>Goodput & Throughput vs Offered Load (Saturation Curve)</h3>
+        <div id="sweep-goodput-chart" class="chart-box"></div>
+        <div class="chart-caption">What am I looking at: System throughput tracking offered load up to the breaking point, beyond which goodput collapses due to timeouts and queue drops.</div>
+      </div>
+    </section>
+
+    <!-- TAB 4: POLICY SHOOTOUT -->
+    <section id="shootout-tab" class="tab-content">
+      <div class="section-header">
+        <h2>Policy Shootout (Head-to-Head Comparison)</h2>
+        <p>Run all 7 scheduling policies side-by-side against identical arrival sequence and compare tail latency, starvation, and fairness.</p>
+      </div>
+
+      <div class="card form-card mb-4">
+        <form id="shootout-form" class="form-inline">
+          <div class="form-group">
+            <label>Trace</label>
+            <select id="shootout-trace" class="form-control">
+              <option value="epa">EPA Web Server</option>
+              <option value="nasa_jul95">NASA July 1995</option>
+              <option value="nasa_aug95">NASA August 1995</option>
+              <option value="sdsc">SDSC Workload</option>
+              <option value="azure">Azure Functions</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Servers (c)</label>
+            <input type="number" id="shootout-servers" class="form-control" value="2" min="1" max="16">
+          </div>
+          <div class="form-group">
+            <label>Load Multiplier</label>
+            <input type="number" id="shootout-load" class="form-control" value="2.5" min="0.2" max="50.0" step="0.5">
+          </div>
+          <button type="submit" class="btn btn-primary" id="btn-run-shootout">Run Shootout</button>
+        </form>
+      </div>
+
+      <div class="card mb-4">
+        <h3>Comparative Performance Rankings</h3>
+        <div id="shootout-bar-chart" class="chart-box"></div>
+        <div class="chart-caption">What am I looking at: Side-by-side comparison of p99 latency (ms) and maximum wait time (starvation metric) across all policies.</div>
+      </div>
+
+      <div class="card">
+        <h3>Detailed Metrics Table</h3>
+        <div class="table-responsive" id="shootout-table-box"></div>
+      </div>
+    </section>
+
+    <!-- TAB 5: CUSTOM POLICY SANDBOX -->
+    <section id="custom-tab" class="tab-content">
+      <div class="section-header">
+        <h2>Custom Policy Sandbox</h2>
+        <p>Write custom scheduling logic in Python. Executed inside a POSIX sandboxed subprocess with AST allowlist & setrlimit.</p>
+      </div>
+
+      <div class="grid-2-col">
+        <div class="card">
+          <div class="form-row mb-3">
+            <div class="form-group">
+              <label>Load Policy Template</label>
+              <select id="custom-template-select" class="form-control">
+                <option value="sjf_custom">Shortest Job First (Min Service Time)</option>
+                <option value="priority_custom">Priority Class (Book > Browse)</option>
+                <option value="aging_custom">Anti-Starvation Aging (Wait/Service Ratio)</option>
+              </select>
+            </div>
+            <button class="btn btn-outline" id="btn-load-template" style="align-self: flex-end; margin-bottom: 5px;">Load Code</button>
+          </div>
+
+          <label>Python Scheduling Function: <code>select_next(queue, now, state) &rarr; int</code></label>
+          <textarea id="custom-code-editor" class="code-editor" spellcheck="false"></textarea>
+          <div class="mt-2 text-muted small">Allowed: pure algorithms, min/max/len/range/enumerate. Forbidden: imports, open, exec, dunder attributes.</div>
+          <button class="btn btn-primary w-100 mt-3" id="btn-run-custom">Execute Sandboxed Simulation</button>
+        </div>
+
+        <div class="card">
+          <h3>Sandbox Execution Results</h3>
+          <div id="custom-status-badge" class="badge badge-outline mb-3">Ready</div>
+          <div id="custom-error-alert" class="alert alert-danger hidden"></div>
+
+          <div class="metrics-grid" id="custom-metrics-grid">
+            <div class="metric-box"><div class="label">Custom Policy</div><div class="val" id="cust-pol">-</div></div>
+            <div class="metric-box"><div class="label">Throughput</div><div class="val" id="cust-thr">-</div><div class="sub">req/s</div></div>
+            <div class="metric-box"><div class="label">p99 Latency</div><div class="val" id="cust-p99">-</div><div class="sub">ms</div></div>
+            <div class="metric-box"><div class="label">Max Wait</div><div class="val" id="cust-maxwait">-</div><div class="sub">ms</div></div>
+            <div class="metric-box"><div class="label">Fairness</div><div class="val" id="cust-jain">-</div><div class="sub">Jain's index</div></div>
+            <div class="metric-box"><div class="label">Drop Rate</div><div class="val" id="cust-drop">-</div><div class="sub">%</div></div>
+          </div>
+
+          <div class="mt-4">
+            <h4>Comparison with Baseline FCFS</h4>
+            <div id="custom-comparison-chart" class="chart-box-small"></div>
+            <div class="chart-caption">What am I looking at: Delta in p99 latency and starvation between your custom policy and baseline FCFS.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: DATASETS -->
+    <section id="datasets-tab" class="tab-content">
+      <div class="section-header">
+        <h2>Real Production Traces Ingestion Explorer</h2>
+        <p>Empirical traffic traces replayed by NetSim-RT. Zero synthetic data in benchmarks.</p>
+      </div>
+
+      <div class="form-group mb-4" style="max-width: 320px;">
+        <label>Select Trace Dataset</label>
+        <select id="dataset-selector" class="form-control">
+          <!-- Dynamically populated -->
+        </select>
+      </div>
+
+      <div class="metrics-grid mb-4" id="dataset-summary-cards">
+        <div class="metric-box"><div class="label">Total Requests</div><div class="val" id="ds-total">-</div></div>
+        <div class="metric-box"><div class="label">Duration</div><div class="val" id="ds-dur">-</div><div class="sub">hours / days</div></div>
+        <div class="metric-box"><div class="label">Avg Arrival Rate</div><div class="val" id="ds-rate">-</div><div class="sub">req/s</div></div>
+        <div class="metric-box"><div class="label">Mean Service Time</div><div class="val" id="ds-st">-</div><div class="sub">ms</div></div>
+        <div class="metric-box"><div class="label">Hurst Parameter (H)</div><div class="val" id="ds-hurst">-</div><div class="sub">burstiness</div></div>
+        <div class="metric-box"><div class="label">Book/Dynamic Ratio</div><div class="val" id="ds-book">-</div><div class="sub">%</div></div>
+      </div>
+
+      <div class="grid-2-col">
+        <div class="card">
+          <h3>Request Arrival Rate Timeline</h3>
+          <div id="dataset-timeline-chart" class="chart-box"></div>
+          <div class="chart-caption">What am I looking at: Diurnal pattern and burst spikes over the trace duration.</div>
+        </div>
+        <div class="card">
+          <h3>Service Time / Size Distribution</h3>
+          <div id="dataset-dist-chart" class="chart-box"></div>
+          <div class="chart-caption">What am I looking at: Heavy-tailed distribution of request service times (ms).</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>NetSim-RT &bull; CSL559 Computer Systems Design &bull; Kinshuk Gupta (12240870), Maloth Madhu (12241020), Bhukya Raju (12240450) &bull; IIT Bhilai</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

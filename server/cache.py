@@ -58,6 +58,14 @@ class ResultCache:
             VALUES (?, ?, ?, ?, ?, ?)
         """, [h, trace_name, policy, servers, load, res_str])
 
+        # Also write results/<hash>.json for offline file access
+        json_file = self.db_path.parent / f"{h}.json"
+        try:
+            with open(json_file, "w") as f:
+                f.write(res_str)
+        except Exception:
+            pass
+
 
 # Singleton cache instance
 _GLOBAL_CACHE: Optional[ResultCache] = None

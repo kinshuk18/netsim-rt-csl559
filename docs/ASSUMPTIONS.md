@@ -67,8 +67,9 @@ This document logs all principal engineering and architectural decisions made au
 
 ---
 
-## 6. Real-Server Emulation & Testbed Calibration
-- **Real-World Validation Setup**:
-  - A real FastAPI/uvicorn server runs on port 6507 behind an Nginx reverse proxy with real worker processes pinned to specific CPU cores using `taskset`.
-  - An asynchronous trace-replay load generator replays real timestamps against the target.
-  - Real round-trip latencies, drop rates, and throughput are measured and persisted to `results/validation/` to validate against DES predictions.
+---
+
+## 7. Sys1 Deployment & Network Accessibility
+- **Server Deployment**: NetSim-RT runs on `sys1` (`172.17.0.9`, host `10.1.75.40`) bound to `0.0.0.0:3507` via Uvicorn.
+- **Port Forwarding**: While SSH port 2507 is open on the host machine, external port 3507 is accessible on the campus intranet or via SSH port tunnel (`ssh -L 3507:localhost:3507 -p 2507 student@10.1.75.40`). Both endpoints serve identical API and frontend static assets.
+

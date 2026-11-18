@@ -1,0 +1,5590 @@
+{
+  "id": "flash_crowd",
+  "title": "Flash Crowd (Busiest 10-Minute Window)",
+  "description": "Peak arrival surge on NASA July trace under 5x load compression driving queues to high utilization.",
+  "config": {
+    "trace_name": "nasa_jul95",
+    "window_start_s": 397800.0,
+    "window_duration_s": 600.0,
+    "num_servers": 2,
+    "load_multiplier": 5.0
+  },
+  "results": {
+    "fcfs": {
+      "policy": "fcfs",
+      "num_servers": 2,
+      "load_multiplier": 5.0,
+      "total_arrivals": 1468,
+      "completed": 1468,
+      "dropped": 0,
+      "timed_out": 0,
+      "in_flight": 0,
+      "sim_duration_s": 150.0,
+      "real_runtime_s": 0.104,
+      "events_per_sec": 42355.3,
+      "throughput_req_per_s": 9.79,
+      "goodput_req_per_s": 9.79,
+      "offered_load_req_per_s": 9.79,
+      "latency": {
+        "mean_ms": 6.86,
+        "p50_ms": 4.23,
+        "p95_ms": 19.4,
+        "p99_ms": 38.15,
+        "p999_ms": 92.81,
+        "max_ms": 130.4
+      },
+      "wait_time": {
+        "mean_ms": 1.56,
+        "p50_ms": 0.0,
+        "p95_ms": 6.51,
+        "p99_ms": 10.94,
+        "max_ms": 18.32
+      },
+      "server_utilization": 0.0259,
+      "mean_queue_length": 0.02,
+      "max_queue_length": 8,
+      "drop_rate": 0.0,
+      "timeout_rate": 0.0,
+      "slo_attainment_pct": 100.0,
+      "jains_fairness_index": 0.7478,
+      "class_metrics": {
+        "browse": {
+          "count": 1422,
+          "mean_latency_ms": 5.89,
+          "p95_latency_ms": 12.75,
+          "p99_latency_ms": 30.91,
+          "max_wait_ms": 18.32
+        },
+        "book": {
+          "count": 46,
+          "mean_latency_ms": 36.69,
+          "p95_latency_ms": 39.75,
+          "p99_latency_ms": 42.65,
+          "max_wait_ms": 8.75
+        }
+      },
+      "timeline": [
+        {
+          "time_s": 0.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 1.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 1.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 2.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 3.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 3.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 4.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 5.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 5.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 6.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 7.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 7.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 8.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 9.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 9.6,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 10.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 11.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 11.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 12.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 13.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 13.61,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 14.21,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 14.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 15.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 16.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 17.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 17.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 18.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 19.2,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 19.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 20.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 21.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 21.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 22.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 23.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 23.61,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 24.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 25.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 25.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 26.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 27.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 27.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 28.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 29.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 29.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 30.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 31.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 31.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 32.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 32.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 33.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 34.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 34.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 35.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 36.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 36.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 37.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 38.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 38.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 39.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 40.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 40.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 41.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 42.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 42.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 43.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 43.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 44.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 45.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 45.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 46.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 47.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 47.8,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 48.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 49.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 49.64,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 50.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 51.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 51.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 52.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 52.8,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 53.4,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 54.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 54.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 55.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 55.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 56.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 57.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 57.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 58.45,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 59.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 59.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 60.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 61.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 61.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 62.41,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 63.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 63.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 64.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 65.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 65.6,
+          "queue_depth": 6,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 66.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 66.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 67.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 68.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 68.81,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 69.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 70.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 71.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 71.6,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 72.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 72.81,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 73.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 74.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 74.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 75.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 76.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 76.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 77.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 78.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 78.8,
+          "queue_depth": 6,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 79.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 80.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 80.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 81.41,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 82.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 82.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 83.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 84.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 84.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 85.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 85.81,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 86.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 87.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 87.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 88.41,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 89.01,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 89.61,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 90.24,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 91.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 91.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 92.2,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 92.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 93.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 94.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 94.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 95.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 96.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 96.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 97.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 98.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 98.8,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 99.4,
+          "queue_depth": 3,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 100.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 101.0,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 101.62,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 102.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 103.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 103.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 104.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 105.0,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 105.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 106.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 107.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 107.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 108.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 109.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 109.6,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 110.24,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 111.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 111.6,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 112.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 112.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 113.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 114.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 114.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 115.4,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 116.01,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 116.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 117.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 118.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 118.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 119.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 120.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 120.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 121.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 122.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 123.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 124.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 124.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 125.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 126.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 127.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 127.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 128.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 129.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 129.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 130.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 131.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 132.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 132.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 133.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 134.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 135.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 135.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 136.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 137.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 138.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 138.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 139.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 140.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 141.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 141.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 142.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 143.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 144.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 145.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 145.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 146.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 147.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 148.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 148.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 149.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        }
+      ]
+    },
+    "sjf": {
+      "policy": "sjf",
+      "num_servers": 2,
+      "load_multiplier": 5.0,
+      "total_arrivals": 1468,
+      "completed": 1468,
+      "dropped": 0,
+      "timed_out": 0,
+      "in_flight": 0,
+      "sim_duration_s": 150.0,
+      "real_runtime_s": 0.076,
+      "events_per_sec": 57946.4,
+      "throughput_req_per_s": 9.79,
+      "goodput_req_per_s": 9.79,
+      "offered_load_req_per_s": 9.79,
+      "latency": {
+        "mean_ms": 6.78,
+        "p50_ms": 4.23,
+        "p95_ms": 20.65,
+        "p99_ms": 40.12,
+        "p999_ms": 92.81,
+        "max_ms": 130.4
+      },
+      "wait_time": {
+        "mean_ms": 1.48,
+        "p50_ms": 0.0,
+        "p95_ms": 6.0,
+        "p99_ms": 8.9,
+        "max_ms": 15.12
+      },
+      "server_utilization": 0.0259,
+      "mean_queue_length": 0.01,
+      "max_queue_length": 8,
+      "drop_rate": 0.0,
+      "timeout_rate": 0.0,
+      "slo_attainment_pct": 100.0,
+      "jains_fairness_index": 0.8074,
+      "class_metrics": {
+        "browse": {
+          "count": 1422,
+          "mean_latency_ms": 5.8,
+          "p95_latency_ms": 12.65,
+          "p99_latency_ms": 30.91,
+          "max_wait_ms": 15.12
+        },
+        "book": {
+          "count": 46,
+          "mean_latency_ms": 37.1,
+          "p95_latency_ms": 41.38,
+          "p99_latency_ms": 43.6,
+          "max_wait_ms": 8.75
+        }
+      },
+      "timeline": [
+        {
+          "time_s": 0.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 1.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 1.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 2.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 3.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 3.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 4.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 5.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 5.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 6.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 7.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 7.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 8.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 9.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 9.6,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 10.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 11.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 11.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 12.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 13.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 13.61,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 14.21,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 14.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 15.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 16.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 17.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 17.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 18.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 19.2,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 19.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 20.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 21.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 21.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 22.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 23.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 23.61,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 24.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 25.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 25.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 26.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 27.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 27.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 28.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 29.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 29.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 30.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 31.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 31.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 32.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 32.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 33.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 34.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 34.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 35.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 36.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 36.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 37.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 38.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 38.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 39.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 40.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 40.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 41.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 42.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 42.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 43.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 43.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 44.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 45.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 45.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 46.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 47.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 47.8,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 48.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 49.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 49.64,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 50.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 51.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 51.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 52.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 52.8,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 53.4,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 54.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 54.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 55.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 55.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 56.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 57.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 57.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 58.45,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 59.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 59.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 60.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 61.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 61.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 62.4,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 63.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 63.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 64.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 65.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 65.6,
+          "queue_depth": 6,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 66.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 66.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 67.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 68.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 68.81,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 69.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 70.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 71.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 71.6,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 72.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 72.81,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 73.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 74.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 74.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 75.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 76.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 76.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 77.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 78.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 78.8,
+          "queue_depth": 6,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 79.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 80.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 80.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 81.41,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 82.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 82.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 83.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 84.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 84.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 85.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 85.81,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 86.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 87.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 87.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 88.41,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 89.01,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 89.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 90.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 91.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 91.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 92.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 93.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 93.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 94.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 95.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 95.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 96.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 97.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 97.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 98.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 99.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 99.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 100.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 101.0,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 101.62,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 102.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 103.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 103.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 104.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 105.0,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 105.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 106.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 107.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 107.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 108.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 109.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 109.6,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 110.24,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 111.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 111.6,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 112.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 112.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 113.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 114.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 114.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 115.4,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 116.01,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 116.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 117.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 118.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 118.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 119.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 120.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 120.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 121.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 122.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 123.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 124.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 124.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 125.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 126.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 127.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 127.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 128.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 129.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 129.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 130.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 131.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 132.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 132.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 133.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 134.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 135.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 135.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 136.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 137.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 138.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 138.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 139.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 140.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 141.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 141.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 142.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 143.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 144.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 145.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 145.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 146.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 147.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 148.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 148.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 149.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        }
+      ]
+    },
+    "static_priority": {
+      "policy": "static_priority",
+      "num_servers": 2,
+      "load_multiplier": 5.0,
+      "total_arrivals": 1468,
+      "completed": 1468,
+      "dropped": 0,
+      "timed_out": 0,
+      "in_flight": 0,
+      "sim_duration_s": 150.0,
+      "real_runtime_s": 0.069,
+      "events_per_sec": 63805.6,
+      "throughput_req_per_s": 9.79,
+      "goodput_req_per_s": 9.79,
+      "offered_load_req_per_s": 9.79,
+      "latency": {
+        "mean_ms": 6.89,
+        "p50_ms": 4.23,
+        "p95_ms": 19.52,
+        "p99_ms": 37.82,
+        "p999_ms": 92.81,
+        "max_ms": 130.4
+      },
+      "wait_time": {
+        "mean_ms": 1.59,
+        "p50_ms": 0.0,
+        "p95_ms": 6.72,
+        "p99_ms": 11.24,
+        "max_ms": 35.01
+      },
+      "server_utilization": 0.0259,
+      "mean_queue_length": 0.02,
+      "max_queue_length": 8,
+      "drop_rate": 0.0,
+      "timeout_rate": 0.0,
+      "slo_attainment_pct": 100.0,
+      "jains_fairness_index": 0.7191,
+      "class_metrics": {
+        "browse": {
+          "count": 1422,
+          "mean_latency_ms": 5.93,
+          "p95_latency_ms": 12.97,
+          "p99_latency_ms": 31.5,
+          "max_wait_ms": 35.01
+        },
+        "book": {
+          "count": 46,
+          "mean_latency_ms": 36.5,
+          "p95_latency_ms": 38.47,
+          "p99_latency_ms": 40.8,
+          "max_wait_ms": 7.19
+        }
+      },
+      "timeline": [
+        {
+          "time_s": 0.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 1.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 1.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 2.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 3.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 3.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 4.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 5.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 5.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 6.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 7.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 7.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 8.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 9.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 9.6,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 10.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 11.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 11.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 12.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 13.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 13.61,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 14.21,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 14.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 15.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 16.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 17.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 17.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 18.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 19.2,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 19.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 20.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 21.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 21.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 22.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 23.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 23.61,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 24.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 25.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 25.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 26.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 27.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 27.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 28.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 29.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 29.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 30.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 31.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 31.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 32.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 32.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 33.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 34.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 34.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 35.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 36.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 36.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 37.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 38.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 38.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 39.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 40.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 40.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 41.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 42.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 42.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 43.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 43.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 44.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 45.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 45.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 46.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 47.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 47.8,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 48.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 49.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 49.64,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 50.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 51.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 51.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 52.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 52.8,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 53.4,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 54.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 54.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 55.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 55.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 56.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 57.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 57.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 58.45,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 59.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 59.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 60.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 61.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 61.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 62.41,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 63.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 63.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 64.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 65.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 65.6,
+          "queue_depth": 6,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 66.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 66.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 67.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 68.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 68.81,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 69.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 70.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 71.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 71.6,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 72.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 72.81,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 73.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 74.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 74.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 75.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 76.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 76.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 77.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 78.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 78.8,
+          "queue_depth": 6,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 79.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 80.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 80.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 81.41,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 82.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 82.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 83.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 84.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 84.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 85.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 85.81,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 86.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 87.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 87.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 88.41,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 89.01,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 89.61,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 90.24,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 91.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 91.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 92.2,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 92.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 93.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 94.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 94.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 95.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 96.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 96.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 97.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 98.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 98.8,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 99.4,
+          "queue_depth": 3,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 100.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 101.0,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 101.62,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 102.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 103.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 103.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 104.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 105.0,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 105.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 106.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 107.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 107.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 108.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 109.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 109.6,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 110.24,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 111.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 111.6,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 112.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 112.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 113.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 114.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 114.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 115.4,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 116.01,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 116.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 117.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 118.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 118.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 119.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 120.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 120.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 121.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 122.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 123.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 124.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 124.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 125.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 126.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 127.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 127.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 128.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 129.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 129.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 130.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 131.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 132.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 132.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 133.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 134.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 135.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 135.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 136.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 137.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 138.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 138.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 139.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 140.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 141.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 141.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 142.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 143.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 144.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 145.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 145.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 146.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 147.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 148.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 148.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 149.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        }
+      ]
+    },
+    "mlfq": {
+      "policy": "mlfq",
+      "num_servers": 2,
+      "load_multiplier": 5.0,
+      "total_arrivals": 1468,
+      "completed": 1468,
+      "dropped": 0,
+      "timed_out": 0,
+      "in_flight": 0,
+      "sim_duration_s": 150.0,
+      "real_runtime_s": 0.0893,
+      "events_per_sec": 51149.7,
+      "throughput_req_per_s": 9.79,
+      "goodput_req_per_s": 9.79,
+      "offered_load_req_per_s": 9.79,
+      "latency": {
+        "mean_ms": 6.86,
+        "p50_ms": 4.23,
+        "p95_ms": 19.4,
+        "p99_ms": 38.15,
+        "p999_ms": 92.81,
+        "max_ms": 130.4
+      },
+      "wait_time": {
+        "mean_ms": 1.56,
+        "p50_ms": 0.0,
+        "p95_ms": 6.51,
+        "p99_ms": 10.38,
+        "max_ms": 18.32
+      },
+      "server_utilization": 0.0259,
+      "mean_queue_length": 0.02,
+      "max_queue_length": 8,
+      "drop_rate": 0.0,
+      "timeout_rate": 0.0,
+      "slo_attainment_pct": 100.0,
+      "jains_fairness_index": 0.7517,
+      "class_metrics": {
+        "browse": {
+          "count": 1422,
+          "mean_latency_ms": 5.89,
+          "p95_latency_ms": 12.65,
+          "p99_latency_ms": 30.91,
+          "max_wait_ms": 18.32
+        },
+        "book": {
+          "count": 46,
+          "mean_latency_ms": 36.8,
+          "p95_latency_ms": 39.75,
+          "p99_latency_ms": 42.65,
+          "max_wait_ms": 8.75
+        }
+      },
+      "timeline": [
+        {
+          "time_s": 0.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 1.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 1.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 2.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 3.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 3.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 4.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 5.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 5.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 6.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 7.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 7.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 8.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 9.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 9.6,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 10.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 11.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 11.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 12.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 13.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 13.61,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 14.21,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 14.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 15.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 16.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 17.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 17.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 18.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 19.2,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 19.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 20.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 21.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 21.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 22.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 23.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 23.61,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 24.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 25.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 25.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 26.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 27.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 27.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 28.4,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 29.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 29.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 30.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 31.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 31.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 32.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 32.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 33.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 34.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 34.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 35.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 36.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 36.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 37.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 38.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 38.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 39.21,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 40.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 40.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 41.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 42.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 42.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 43.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 43.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 44.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 45.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 45.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 46.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 47.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 47.8,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 48.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 49.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 49.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 50.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 51.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 51.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 52.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 52.8,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 53.4,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 54.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 54.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 55.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 55.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 56.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 57.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 57.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 58.41,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 59.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 59.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 60.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 61.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 61.8,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 62.41,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 63.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 63.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 64.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 65.0,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 65.6,
+          "queue_depth": 6,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 66.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 66.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 67.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 68.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 68.81,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 69.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 70.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 71.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 71.6,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 72.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 72.81,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 73.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 74.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 74.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 75.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 76.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 76.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 77.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 78.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 78.8,
+          "queue_depth": 6,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 79.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 80.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 80.8,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 81.41,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 82.01,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 82.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 83.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 84.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 84.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 85.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 85.81,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 86.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 87.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 87.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 88.41,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 89.01,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 89.61,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 90.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 91.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 91.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 92.2,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 92.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 93.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 94.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 94.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 95.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 96.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 96.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 97.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 98.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 98.8,
+          "queue_depth": 4,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 99.4,
+          "queue_depth": 3,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 100.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 101.0,
+          "queue_depth": 2,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 101.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 102.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 103.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 103.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 104.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 105.0,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 105.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 106.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 107.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 107.61,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 108.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 109.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 109.6,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 110.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 111.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 111.6,
+          "queue_depth": 0,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 112.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 112.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 113.6,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 114.2,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 114.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 115.4,
+          "queue_depth": 1,
+          "utilization": 1.0,
+          "active_servers": 2
+        },
+        {
+          "time_s": 116.01,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 116.8,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 117.4,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 118.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 118.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 119.21,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 120.0,
+          "queue_depth": 0,
+          "utilization": 0.5,
+          "active_servers": 1
+        },
+        {
+          "time_s": 120.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 121.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 122.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 123.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 124.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 124.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 125.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 126.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 127.0,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 127.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 128.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 129.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 129.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 130.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 131.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 132.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 132.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 133.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 134.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 135.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 135.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 136.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 137.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 138.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 138.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 139.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 140.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 141.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 141.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 142.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 143.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 144.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 145.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 145.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 146.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 147.4,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 148.2,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 148.8,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        },
+        {
+          "time_s": 149.6,
+          "queue_depth": 0,
+          "utilization": 0.0,
+          "active_servers": 0
+        }
+      ]
+    }
+  }
+}
