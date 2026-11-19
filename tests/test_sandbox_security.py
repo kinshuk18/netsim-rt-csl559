@@ -3,6 +3,7 @@ Test Suite for NetSim-RT Sandboxed Custom Policy Execution & Escape Attempts
 CSL559 Computer Systems Design - IIT Bhilai
 """
 
+from pathlib import Path
 import pytest
 from engine.sandbox import validate_code_ast, run_sandboxed_simulation
 
@@ -63,6 +64,7 @@ def select_next(queue, now, state):
     assert "Calling builtin 'open' is forbidden" in err
 
 
+@pytest.mark.skipif(not Path("data/processed/epa.parquet").exists(), reason="processed data not in CI")
 def test_sandboxed_simulation_fallback_on_rejection():
     bad_code = """
 import sys

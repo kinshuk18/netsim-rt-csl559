@@ -135,6 +135,7 @@ def test_conservation_of_requests():
         assert res.dropped > 0, "Expected drops under heavy overload"
 
 
+@pytest.mark.skipif(not Path("data/processed/epa.parquet").exists(), reason="processed data not in CI")
 def test_determinism_by_seed():
     """Verify that identical simulation configurations produce bit-exact results."""
     trace_path = "data/processed/epa.parquet"

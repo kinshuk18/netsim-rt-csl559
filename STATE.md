@@ -21,3 +21,5 @@ S4: DONE — validation.json updated: mape_rho_lte_0_9=69.56%, floor=6.47ms, LIM
 S5: DONE — smoke_ui 6/6 PASS, 18 pytest pass
 S6: DONE — report assets generated (4 PDFs), main.tex authors/abstract/AI-decl filled, refs.bib written (9 refs), report_overleaf.zip created; latexmk stalled (acmart download), use Overleaf
 S7: DONE — only /etc/passwd in security test (intentional), no real secrets in git
+T1: DONE — CI skipif added for missing data/processed/epa.parquet, actions bumped to checkout@v5 and setup-python@v6, 18 passed locally (16 passed/2 skipped in CI simulation)
+CI fix: data-dependent tests skip when parquet absent
