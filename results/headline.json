@@ -25,25 +25,25 @@
       "offered_req_s": 52.858091,
       "rho_analytic": 0.384749,
       "p99_ms": 958.6,
-      "reason": "p99 > SLO"
+      "reason": "both SLO breach and goodput collapse"
     }
   },
   "shootout": {
     "best_p99": {
-      "policy": "fcfs",
-      "p99_ms": 19220.39
+      "policy": "sjf",
+      "p99_ms": 3003.48
     },
     "worst_p99": {
       "policy": "mlfq",
-      "p99_ms": 52498.37
+      "p99_ms": 65606.44
     },
     "best_fairness": {
       "policy": "rr",
-      "jain_index": 0.6741
+      "jain_index": 0.4339
     },
     "worst_fairness": {
       "policy": "srtf",
-      "jain_index": 0.0572
+      "jain_index": 0.0667
     }
   },
   "outage_recovery": {
@@ -53,9 +53,9 @@
   },
   "retry_storm": {
     "traffic_amplification_ratio": 2.86,
-    "collapse_threshold": "rho>0.8000 (offered=109.9067 req/s, goodput=83.4800 req/s)"
+    "collapse_threshold": "no metastable collapse observed on this trace"
   },
   "simulation_throughput": {
-    "events_per_second": 293549
+    "events_per_second": 276127
   }
 }

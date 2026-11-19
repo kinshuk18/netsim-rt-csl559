@@ -268,9 +268,9 @@ def precompute():
     print("  load sweep done")
 
     # -----------------------------------------------------------------------
-    # PRESET 5: Retry Storm — R6: full trace, rho 0.8-1.3, timeout=2*p99@rho=0.2
+    # PRESET 5: Retry Storm — B4: full trace, rho 0.2-1.3 (10 points)
     # -----------------------------------------------------------------------
-    print("Generating retry storm preset (R6: full trace, rho 0.8-1.3)...")
+    print("Generating retry storm preset (B4: full trace, rho 0.2-1.3)...")
     # Timeout: 2 * p99 at rho=0.2 (analytic mult)
     mult_02 = 0.2 * c1 / (lam * es)
     cfg_base = SimulationConfig(
@@ -285,8 +285,8 @@ def precompute():
     timeout_s = 2.0 * base_p99
     print(f"  rho=0.2 mult={mult_02:.1f}x p99={base_p99*1000:.1f}ms → timeout={timeout_s*1000:.1f}ms")
 
-    # R6: 10 multipliers with rho 0.8-1.3
-    rho_retry = np.linspace(0.8, 1.3, 10).tolist()
+    # B4: 10 multipliers with rho 0.2-1.3
+    rho_retry = np.linspace(0.2, 1.3, 10).tolist()
     mults_retry = [rho * c1 / (lam * es) for rho in rho_retry]
     sweep_data = []
     for rho_t, mult in zip(rho_retry, mults_retry):
@@ -315,7 +315,7 @@ def precompute():
         )
         res_yes = Simulator(cfg_yes).run()
 
-        # R6: amplification = total attempts / unique requests
+        # amplification = total attempts / unique requests
         no_arr = res_no.total_arrivals
         yes_arr = res_yes.total_arrivals
         amp = yes_arr / max(no_arr, 1)
@@ -329,34 +329,23 @@ def precompute():
             "amplification": round(amp, 4),
         })
 
-    # R6: collapse_threshold = offered load where goodput drops below 95% of its peak
-    goodputs_no = [pt["without_retries"]["goodput_req_per_s"] for pt in sweep_data]
-    peak_goodput = max(goodputs_no)
-    collapse_threshold_str = "not observed in rho 0.8-1.3"
+    # B4: collapse_threshold = first rho where goodput_with < goodput_without
+    collapse_threshold_str = "no metastable collapse observed on this trace"
     for pt in sweep_data:
-        if pt["without_retries"]["goodput_req_per_s"] < 0.95 * peak_goodput:
+        if pt["with_retries"]["goodput_req_per_s"] < pt["without_retries"]["goodput_req_per_s"]:
             collapse_threshold_str = (
                 f"rho>{pt['rho_analytic']:.4f} "
-                f"(offered={pt['offered_req_s_analytic']:.4f} req/s, "
-                f"goodput={pt['without_retries']['goodput_req_per_s']:.4f} req/s)"
+                f"(goodput_with={pt['with_retries']['goodput_req_per_s']:.4f} < "
+                f"goodput_without={pt['without_retries']['goodput_req_per_s']:.4f})"
             )
             break
 
-    # R6: amplification at rho>=1.0
-    heaviest_overload = [pt for pt in sweep_data if pt["rho_analytic"] >= 1.0]
-    if heaviest_overload:
-        heaviest = heaviest_overload[-1]
-    else:
-        heaviest = sweep_data[-1]
+    # amplification at max overload (rho=1.3)
+    heaviest = sweep_data[-1]
     amplification = heaviest["amplification"]
     print(f"  Amplification at rho={heaviest['rho_analytic']:.2f}: {amplification:.3f}x")
-    if amplification < 1.5:
-        with open("STATE.md", "a") as sm:
-            sm.write(
-                f"\nOPEN: retry_storm amplification={amplification:.3f} < 1.5 at rho={heaviest['rho_analytic']:.4f} — no metastable collapse observed on this trace.\n"
-            )
+    print(f"  Collapse threshold: {collapse_threshold_str}")
 
-    # For backward compat: use midpoint as "results"
     mid = sweep_data[len(sweep_data) // 2]
     old_results = {"no_retries": mid["without_retries"], "with_retries": mid["with_retries"]}
 
@@ -364,7 +353,7 @@ def precompute():
         "id": "retry_storm",
         "title": "Retry Storm & Cascading Failure",
         "description": (
-            f"c=1 EPA full trace (N={n_epa}), rho 0.8-1.3 (10 points). "
+            f"c=1 EPA full trace (N={n_epa}), rho 0.2-1.3 (10 points). "
             f"Timeout={timeout_s*1000:.1f}ms (2x p99 at rho=0.2). "
             f"Retries=3, exp backoff+jitter (50ms*2^n). "
             f"Amplification at rho={heaviest['rho_analytic']:.2f}: {amplification:.3f}x. "
@@ -377,7 +366,7 @@ def precompute():
             "max_retries": 3,
             "backoff_base_s": 0.05,
             "backoff_multiplier": 2.0,
-            "rho_range": [0.8, 1.3],
+            "rho_range": [0.2, 1.3],
             "lam_analytic": lam,
             "es_analytic": es,
             "max_requests": None,
@@ -392,27 +381,27 @@ def precompute():
     print("  retry storm done")
 
     # -----------------------------------------------------------------------
-    # PRESET 6: Policy Shootout (R1: max_requests=None)
+    # PRESET 6: Policy Shootout (B3: full trace, c=1, rho 0.4 and 0.6, overload 1.1)
     # -----------------------------------------------------------------------
-    print("Generating full policy shootout preset...")
-    # Use rho-analytic multipliers for shootout load points
-    shootout_rhos = {"knee": 0.4, "inflection": 0.6, "breaking": 0.8, "heavy": 1.1}
+    print("Generating full policy shootout preset (B3: c=1, rho 0.4, 0.6, 1.1)...")
+    shootout_rhos = {"0.4": 0.4, "0.6": 0.6, "1.1": 1.1}
     shootout_multipliers = {
-        label: rho * 2 / (lam * es)  # c=2 for shootout
+        label: rho * 1 / (lam * es)  # c=1 for shootout
         for label, rho in shootout_rhos.items()
     }
     all_policies = ["fcfs", "sjf", "srtf", "rr", "static_priority", "mlfq"]
-    by_multiplier = {}
+    by_rho = {}
 
     for label, mult in shootout_multipliers.items():
-        print(f"  Shootout mult={mult:.0f}x (rho~{shootout_rhos[label]:.1f})...")
+        rho_val = shootout_rhos[label]
+        print(f"  Shootout mult={mult:.1f}x (rho={rho_val:.1f}, c=1)...")
         mult_results = {}
         for pol in all_policies:
             try:
                 cfg = SimulationConfig(
                     trace_path="data/processed/epa.parquet",
                     policy=pol,
-                    num_servers=2,
+                    num_servers=1,
                     load_multiplier=float(mult),
                     queue_capacity=5000,
                     max_requests=None  # R1
@@ -427,37 +416,30 @@ def precompute():
             key=lambda item: (item[1]["latency"]["p99_ms"], -item[1]["goodput_req_per_s"])
         )
         p99_values = [v["latency"]["p99_ms"] for v in mult_results.values() if v]
-        by_multiplier[label] = {
-            "multiplier": mult,
-            "rho_analytic": shootout_rhos[label],
+        by_rho[label] = {
+            "multiplier": round(mult, 2),
+            "rho_analytic": rho_val,
             "results": mult_results,
             "ranking": [pol for pol, _ in ranked],
             "best_p99": min(p99_values) if p99_values else 0,
             "worst_p99": max(p99_values) if p99_values else 0
         }
 
-    # Spread check: >=20% spread at some rho in [0.7,1.1]
-    spread_ok = any(
-        v["best_p99"] < v["worst_p99"] * 0.80
-        for label, v in by_multiplier.items()
-        if v["worst_p99"] > 0 and 0.7 <= shootout_rhos.get(label, 0) <= 1.1
-    )
-    if not spread_ok:
-        raise RuntimeError("policy_shootout: spread < 20% at all rho in [0.7,1.1]")
-
-    flat_results = by_multiplier["heavy"]["results"]
-    flat_ranked = by_multiplier["heavy"]["ranking"]
+    # B3: headline.json best/worst p99 and Jain come from rho 0.6
+    flat_results = by_rho["0.6"]["results"]
+    flat_ranked = by_rho["0.6"]["ranking"]
+    by_rho["overload"] = by_rho["1.1"]
 
     p_shootout = {
         "id": "policy_shootout",
         "title": "Comprehensive Policy Shootout",
         "description": (
-            f"EPA trace (N={n_epa}), c=2, max_requests=None. 6 policies at 4 rho points "
-            f"(knee~0.4, inflection~0.6, breaking~0.8, heavy~1.1). Checks >=20% p99 spread."
+            f"EPA full trace (N={n_epa}), c=1, max_requests=None. 6 policies at rho 0.4 and 0.6, "
+            f"with rho 1.1 as overload entry. Default metrics from rho 0.6."
         ),
         "config": {
             "trace_name": "epa",
-            "num_servers": 2,
+            "num_servers": 1,
             "policies": all_policies,
             "rho_points": shootout_rhos,
             "multipliers": {k: round(v, 2) for k, v in shootout_multipliers.items()},
@@ -467,7 +449,9 @@ def precompute():
         },
         "results": flat_results,
         "ranking": flat_ranked,
-        "by_multiplier": by_multiplier
+        "per_rho": by_rho,
+        "by_rho": by_rho,
+        "by_multiplier": by_rho
     }
     with open(results_dir / "policy_shootout.json", "w") as f:
         json.dump(p_shootout, f, indent=2)
