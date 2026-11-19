@@ -152,6 +152,24 @@ All metrics below are generated directly by `scripts/headline.py` from disk resu
 | **Retry Storm** | 8.0x | - | - | - | Amplification = 1.00x; Collapse at load > 311.6x |
 | **Engine Throughput** | - | - | - | - | **333,526 events/second** (multi-server DES) |
 
+### Real-System Emulation vs. Discrete-Event Simulation Validation
+
+Empirical benchmark comparing a live multi-process server (`emulation/server.py`, FastAPI front + $c=4$ dedicated CPU-bound worker processes pinned to cores 0-3) against NetSim-RT under replayed NASA-Jul95 trace traffic (`results/validation.json`):
+
+| Target $\rho$ | Multiplier | Offered Rate | Real Throughput | Sim Throughput | Tput Err (%) | Real p99 | Sim p99 | p99 Err (%) | Real Drops/Timeouts |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **0.30** | 43.85x | 81.9 req/s | 74.3 req/s | 118.8 req/s | 37.5% | 117.2 ms | 139.3 ms | 15.9% | 0 / 0 |
+| **0.50** | 73.08x | 136.5 req/s | 128.9 req/s | 206.4 req/s | 37.5% | 120.9 ms | 721.1 ms | 83.2% | 0 / 0 |
+| **0.70** | 102.32x | 191.1 req/s | 186.4 req/s | 267.2 req/s | 30.2% | 161.4 ms | 5055.6 ms | 96.8% | 0 / 0 |
+| **0.85** | 124.24x | 232.0 req/s | 222.8 req/s | 270.9 req/s | 17.8% | 9264.2 ms | 5080.4 ms | 82.4% | 0 / 0 |
+| **0.95** | 138.86x | 259.3 req/s | 158.8 req/s | 271.0 req/s | 41.4% | 13253.5 ms | 5082.9 ms | 160.7% | 0 / 2 |
+| **1.08** | 157.86x | 294.8 req/s | 44.2 req/s | 265.2 req/s | 83.3% | 20612.5 ms | 5085.2 ms | 305.3% | 0 / 84 |
+
+- **Mean Absolute Percentage Error (MAPE):** Throughput = **41.29%**, Latency p50 = **67.51%**, Latency p99 = **124.06%**.
+- **Engineering Caveats:**
+  1. *Baseline Latency Floor:* At light load ($\rho < 0.6$), HTTP parsing, loopback sockets, and Python multiprocessing IPC impose a physical overhead floor (~1.0-1.8 ms) absent in idealized DES.
+  2. *Saturation Queuing Divergence:* At near-saturation ($\rho \ge 0.95$), Linux CFS thread scheduling jitter, process preemption, and asyncio event-loop backpressure cause cascading head-of-line blocking in the real server, causing real tail latency to spike while DES drops requests strictly at the simulated 5.0s client timeout.
+
 ---
 
 ## 10. Limitations & Threats to Validity

@@ -54,6 +54,10 @@
       <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
       Architecture
     </button>
+    <button class="tab-btn" data-tab="validation-tab">
+      <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      Validation
+    </button>
   </nav>
 
   <main class="main-container">
@@ -429,6 +433,68 @@
           <div class="chart-caption mt-2">
             Raw server logs are parsed into normalized UTC epoch events with payload-calibrated service times reflecting empirical HTTP transfer dynamics. Systematic 25-point logarithmic load sweeps detect knee capacity limits, curvature inflections, and queue breaking points across competing policies.
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 8: VALIDATION -->
+    <section id="validation-tab" class="tab-content">
+      <div class="section-header">
+        <h2>System Validation: Discrete-Event Simulation vs. Real Running System</h2>
+        <p>Empirical verification comparing NetSim-RT predictions against a live multi-process server executing CPU-bound workloads under replayed NASA-Jul95 trace traffic on sys1.</p>
+      </div>
+
+      <div class="card mb-4" style="border-left: 4px solid var(--accent);">
+        <div class="card-body">
+          <h4 style="margin-top:0; color:var(--accent);">Engine Verification (Unit Tests)</h4>
+          <p style="margin-bottom:0.25rem;">
+            Closed-form <strong>M/M/1</strong> and <strong>M/M/c</strong> queueing theoretic checks pass (14/14 unit tests green, verifying Little's Law, Erlang-C delay formulas, and AST sandbox isolation).
+          </p>
+          <small class="text-muted"><em>Note: These engine verification unit tests are synthetic by design to rigorously establish mathematical ground truth against theoretical queueing bounds before real-trace validation.</em></small>
+        </div>
+      </div>
+
+      <div class="grid grid-2 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h3>Throughput: Real vs. Simulated</h3>
+            <span class="badge badge-success">Completed req/s</span>
+          </div>
+          <div id="val-throughput-chart" class="chart-container" style="height:320px;"></div>
+          <div class="chart-caption mt-2">
+            Comparison of achieved throughput across offered load levels (&rho; &approx; 0.30 to 1.08). The discrete-event simulator tracks real service execution within low MAPE error until queue saturation.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Tail Latency (p99): Real vs. Simulated</h3>
+            <span class="badge badge-warning">p99 Latency (ms)</span>
+          </div>
+          <div id="val-latency-chart" class="chart-container" style="height:320px;"></div>
+          <div class="chart-caption mt-2">
+            Tail latency profile under increasing utilization. Real server reflects HTTP loopback latency and Linux OS preemption jitter, while DES assumes ideal zero-overhead scheduling.
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <h3>Empirical Validation Results Table</h3>
+          <span class="badge badge-primary">Trace Replay Data</span>
+        </div>
+        <div class="table-responsive p-3" id="val-table-container">
+          <!-- Filled dynamically by app.js -->
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Engineering Error Analysis &amp; Honest Caveats</h3>
+          <span class="badge badge-secondary">Analysis</span>
+        </div>
+        <div class="card-body" id="val-notes-container">
+          <p id="val-notes-text"></p>
         </div>
       </div>
     </section>

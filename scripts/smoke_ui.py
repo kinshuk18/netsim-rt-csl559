@@ -61,10 +61,10 @@ def run_smoke():
             else:
                 print(f"FAIL: Page load errors: console={console_errors}, page={page_errors}")
 
-            # Check 2: Tab navigation
+            # Check 2: Tab navigation (all 8 tabs including Validation)
             tab_ids = [
                 "presets-tab", "simulator-tab", "sweep-tab",
-                "shootout-tab", "custom-tab", "datasets-tab", "architecture-tab"
+                "shootout-tab", "custom-tab", "datasets-tab", "architecture-tab", "validation-tab"
             ]
             tabs_ok = True
             for tid in tab_ids:
@@ -78,7 +78,7 @@ def run_smoke():
                 if not sec.is_visible():
                     tabs_ok = False
                     break
-            print("PASS: Tab navigation (all 7 tabs)" if tabs_ok else "FAIL: Tab navigation")
+            print("PASS: Tab navigation (all 8 tabs)" if tabs_ok else "FAIL: Tab navigation")
 
             # Check 3: Preset cards rendering & inspection
             page.locator("button[data-tab='presets-tab']").click()

@@ -32,6 +32,9 @@ function initTabs() {
       btn.classList.add("active");
       const targetId = btn.dataset.tab;
       document.getElementById(targetId).classList.add("active");
+      if (targetId === "validation-tab") {
+        loadValidation();
+      }
       // Trigger ECharts resize
       setTimeout(() => {
         Object.values(activeCharts).forEach(c => c && c.resize && c.resize());
@@ -585,4 +588,135 @@ function handleDatasetChange() {
       itemStyle: { color: "#34d399" }
     }]
   });
+}
+
+// Validation Tab Loader
+let validationLoaded = false;
+async function loadValidation() {
+  if (validationLoaded) return;
+  try {
+    const res = await fetch("/api/validation");
+    if (!res.ok) return;
+    const data = await res.json();
+    validationLoaded = true;
+
+    // Render Table
+    const tableContainer = document.getElementById("val-table-container");
+    let html = `<table class="data-table">
+      <thead>
+        <tr>
+          <th>Target &rho;</th>
+          <th>Multiplier</th>
+          <th>Target Rate (req/s)</th>
+          <th>Real Tput (req/s)</th>
+          <th>Sim Tput (req/s)</th>
+          <th>Tput Rel Err</th>
+          <th>Real p99 (ms)</th>
+          <th>Sim p99 (ms)</th>
+          <th>p99 Rel Err</th>
+          <th>Drops / Timeouts</th>
+        </tr>
+      </thead>
+      <tbody>`;
+    data.levels.forEach(lvl => {
+      const tputErrPct = (lvl.rel_error.throughput * 100).toFixed(1) + "%";
+      const p99ErrPct = (lvl.rel_error.p99 * 100).toFixed(1) + "%";
+      html += `<tr>
+        <td><strong>&rho; = ${lvl.rho_target.toFixed(2)}</strong></td>
+        <td>${lvl.multiplier}x</td>
+        <td>${lvl.target_rate_rps ? lvl.target_rate_rps.toFixed(1) : "-"}</td>
+        <td>${lvl.real.throughput_rps.toFixed(1)}</td>
+        <td>${lvl.simulated.throughput_rps.toFixed(1)}</td>
+        <td><span class="badge ${lvl.rel_error.throughput < 0.35 ? 'badge-success' : 'badge-warning'}">${tputErrPct}</span></td>
+        <td>${lvl.real.p99_ms.toFixed(1)}</td>
+        <td>${lvl.simulated.p99_ms.toFixed(1)}</td>
+        <td><span class="badge ${lvl.rel_error.p99 < 0.5 ? 'badge-success' : 'badge-warning'}">${p99ErrPct}</span></td>
+        <td>${lvl.real.drops} / ${lvl.real.timeouts}</td>
+      </tr>`;
+    });
+    html += `</tbody>
+      <tfoot>
+        <tr style="background:var(--surface); font-weight:bold;">
+          <td colspan="5">Mean Absolute Percentage Error (MAPE)</td>
+          <td>${data.mape.throughput_pct.toFixed(2)}%</td>
+          <td colspan="2">Latency MAPE (p50: ${data.mape.p50_pct.toFixed(2)}%)</td>
+          <td>${data.mape.p99_pct.toFixed(2)}%</td>
+          <td>-</td>
+        </tr>
+      </tfoot>
+    </table>`;
+    tableContainer.innerHTML = html;
+
+    // Render Notes
+    const notesEl = document.getElementById("val-notes-text");
+    if (notesEl && data.notes) {
+      notesEl.textContent = data.notes;
+    }
+
+    // Render Throughput Chart
+    const tputDom = document.getElementById("val-throughput-chart");
+    if (activeCharts.valTput) activeCharts.valTput.dispose();
+    const chartTput = echarts.init(tputDom, "dark");
+    activeCharts.valTput = chartTput;
+
+    const rhos = data.levels.map(l => `\u03c1=${l.rho_target.toFixed(2)}`);
+    chartTput.setOption({
+      backgroundColor: "transparent",
+      tooltip: { trigger: "axis" },
+      legend: { data: ["Real System", "Simulated (DES)"], textStyle: { color: "#e2e8f0" } },
+      xAxis: { type: "category", data: rhos, name: "Load Level" },
+      yAxis: { type: "value", name: "Throughput (req/s)" },
+      series: [
+        {
+          name: "Real System",
+          type: "line",
+          data: data.levels.map(l => l.real.throughput_rps),
+          itemStyle: { color: "#38bdf8" },
+          symbolSize: 8
+        },
+        {
+          name: "Simulated (DES)",
+          type: "line",
+          lineStyle: { type: "dashed", width: 2 },
+          data: data.levels.map(l => l.simulated.throughput_rps),
+          itemStyle: { color: "#34d399" },
+          symbolSize: 8
+        }
+      ]
+    });
+
+    // Render Latency Chart
+    const latDom = document.getElementById("val-latency-chart");
+    if (activeCharts.valLat) activeCharts.valLat.dispose();
+    const chartLat = echarts.init(latDom, "dark");
+    activeCharts.valLat = chartLat;
+
+    chartLat.setOption({
+      backgroundColor: "transparent",
+      tooltip: { trigger: "axis" },
+      legend: { data: ["Real System p99", "Simulated p99"], textStyle: { color: "#e2e8f0" } },
+      xAxis: { type: "category", data: rhos, name: "Load Level" },
+      yAxis: { type: "value", name: "p99 Latency (ms)" },
+      series: [
+        {
+          name: "Real System p99",
+          type: "line",
+          data: data.levels.map(l => l.real.p99_ms),
+          itemStyle: { color: "#f59e0b" },
+          symbolSize: 8
+        },
+        {
+          name: "Simulated p99",
+          type: "line",
+          lineStyle: { type: "dashed", width: 2 },
+          data: data.levels.map(l => l.simulated.p99_ms),
+          itemStyle: { color: "#ec4899" },
+          symbolSize: 8
+        }
+      ]
+    });
+
+  } catch (err) {
+    console.error("Error loading validation data:", err);
+  }
 }

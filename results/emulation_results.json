@@ -1,0 +1,81 @@
+{
+  "scenario": "NASA-Jul95 Dilated Trace Emulation",
+  "num_servers": 4,
+  "dilation_factor": 2.5,
+  "duration_per_level_s": 20.0,
+  "capacity_rps": 274.5,
+  "levels": [
+    {
+      "rho_target": 0.3,
+      "multiplier": 37.15608106646419,
+      "target_rate_rps": 82.34947044872382,
+      "completed": 1486,
+      "drops": 0,
+      "timeouts": 0,
+      "throughput_rps": 74.3,
+      "p50_ms": 20.87,
+      "p95_ms": 96.08,
+      "p99_ms": 117.24
+    },
+    {
+      "rho_target": 0.5,
+      "multiplier": 61.92680177744032,
+      "target_rate_rps": 137.2491174145397,
+      "completed": 2578,
+      "drops": 0,
+      "timeouts": 0,
+      "throughput_rps": 128.9,
+      "p50_ms": 24.08,
+      "p95_ms": 95.26,
+      "p99_ms": 120.93
+    },
+    {
+      "rho_target": 0.7,
+      "multiplier": 86.69752248841644,
+      "target_rate_rps": 192.14876438035557,
+      "completed": 3728,
+      "drops": 0,
+      "timeouts": 0,
+      "throughput_rps": 186.4,
+      "p50_ms": 30.52,
+      "p95_ms": 107.63,
+      "p99_ms": 161.38
+    },
+    {
+      "rho_target": 0.85,
+      "multiplier": 105.27556302164854,
+      "target_rate_rps": 233.3234996047175,
+      "completed": 4456,
+      "drops": 0,
+      "timeouts": 0,
+      "throughput_rps": 222.8,
+      "p50_ms": 848.97,
+      "p95_ms": 6444.27,
+      "p99_ms": 9264.16
+    },
+    {
+      "rho_target": 0.95,
+      "multiplier": 117.6609233771366,
+      "target_rate_rps": 260.77332308762544,
+      "completed": 3176,
+      "drops": 0,
+      "timeouts": 0,
+      "throughput_rps": 158.8,
+      "p50_ms": 962.44,
+      "p95_ms": 9726.8,
+      "p99_ms": 13253.51
+    },
+    {
+      "rho_target": 1.08,
+      "multiplier": 133.7618918392711,
+      "target_rate_rps": 296.4580936154058,
+      "completed": 885,
+      "drops": 0,
+      "timeouts": 0,
+      "throughput_rps": 44.25,
+      "p50_ms": 5341.84,
+      "p95_ms": 17644.73,
+      "p99_ms": 20612.55
+    }
+  ]
+}

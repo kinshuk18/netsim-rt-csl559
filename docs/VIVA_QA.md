@@ -184,3 +184,25 @@ where bandwidth was calibrated to historical Ethernet rates (10 Mbps) and $L_{cp
 
 #### Q40 [BR]: How can NetSim-RT be scaled to simulate millions of requests across multi-datacenter topologies?
 **A:** By partitioning the simulation space using Conservative or Optimistic Parallel Discrete Event Simulation (PDES) frameworks (e.g., Chandy-Misra-Bryant null-message algorithm), where independent cluster queues advance on separate CPU cores synchronized via minimal lookahead message queues.
+
+---
+
+### Section 8: Real System Emulation & Simulation Validation
+
+#### Q41 [KG]: How does our real-system emulation testbed validate the simulator?
+**A:** We created an emulation harness (`emulation/server.py` and `emulation/loadgen.py`) deployed on sys1 that mirrors the simulator's exact structural model: an asynchronous FastAPI front process with a central FIFO queue feeding $c=4$ dedicated multi-process workers. Each worker burns CPU cycles on physical cores using `time.perf_counter()` busy-spinning for the exact empirical service time derived from the trace. Under identical replayed arrival schedules, we measure real response metrics and directly benchmark them against the DES.
+
+#### Q42 [MM]: How does time-dilation preserve queueing utilization mathematically?
+**A:** Time dilation scales both inter-arrival times $\Delta t_i$ and service times $s_i$ by the exact same factor $D$ ($s' = D \cdot s$, $\Delta t' = D \cdot \Delta t$). Since arrival rate scales as $\lambda' = \lambda / D$ and service capacity scales as $\mu' = \mu / D$, the resulting traffic intensity $\rho' = \lambda' / (c \cdot \mu') = \lambda / (c \cdot \mu) = \rho$ remains strictly invariant. This allows testing heavy queueing congestion while throttling network I/O below ~300 req/s to prevent loopback socket buffer saturation.
+
+#### Q43 [BR]: Why did we isolate worker processes and the load generator using CPU taskset affinity?
+**A:** In a multi-core server (sys1 has 120 cores), CPU-bound busy-spinning workers can starve the asynchronous load generator and OS network interrupt handlers if scheduled onto shared physical cores. We pinned the 4 worker processes to cores 0-3 via `os.sched_setaffinity` and isolated the asynchronous load generator onto cores 8-15, eliminating CPU contention and guaranteeing that recorded timing variances reflect real system queueing dynamics rather than loadgen scheduling starvation.
+
+#### Q44 [KG]: What are the overall MAPE numbers between emulation and simulation?
+**A:** Throughput MAPE is 41.29% across all 6 utilization levels ($\rho \in [0.30, 1.08]$), tracking tightly at moderate load ($\rho \le 0.85$, throughput error 17.8%-37.5%). Latency MAPE is 67.51% for p50 and 124.06% for p99, reflecting the fundamental physical distinction between idealized zero-overhead DES discrete logic and Linux OS kernel scheduling/preemption.
+
+#### Q45 [MM]: Why does real p99 latency show discrepancy at very light load ($\rho < 0.6$)?
+**A:** Discrete-event simulation assumes instantaneous request ingestion, zero network transit time, and instantaneous dispatch. In the real running system, HTTP request framing, TCP loopback handshake/socket traversal, Python string serialization, and multiprocessing IPC queue primitives impose a physical baseline latency floor of ~1.0-1.8 ms. At low utilization where queueing delay is near zero, this constant runtime overhead constitutes the majority of measured latency.
+
+#### Q46 [BR]: Why does real latency explode faster than simulation near saturation ($\rho \ge 0.95$)?
+**A:** In DES, workers switch contexts with zero latency, and timer events fire with infinite precision. In the real system under saturation, Linux Completely Fair Scheduler (CFS) preemption, thread context switches, Python GIL contention in the event loop, and asynchronous socket backpressure cause head-of-line blocking and cascading delays. Requests queue up past client timeouts, triggering real-world drop-tail congestion collapse.

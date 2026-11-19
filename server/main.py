@@ -309,6 +309,15 @@ def get_preset(preset_id: str):
     return res
 
 
+@app.get("/api/validation")
+def get_validation():
+    val_file = BASE_DIR / "results" / "validation.json"
+    if not val_file.exists():
+        raise HTTPException(status_code=404, detail="Validation results not found")
+    with open(val_file, "r") as f:
+        return json.load(f)
+
+
 # Static files mount for Frontend
 if STATIC_DIR.exists():
     app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
