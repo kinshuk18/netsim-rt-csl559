@@ -1,6 +1,13 @@
 """
 Precompute Demo Presets and Phase Transitions
 CSL559 Computer Systems Design - IIT Bhilai
+
+R1: max_requests=None for all EPA sweep/shootout/retry runs (full 47742 req, each run ~0.5s).
+R2: Sweep grid by rho_analytic (not multiplier). lam/ES from full trace; mult=rho*c/(lam*ES).
+R3: Knee via KneeLocator(x=rho_analytic), inflection via 2nd-derivative restricted to rho<=1.0.
+R4: SJF vs FCFS on same rho_grid; both knees/breaking points recorded.
+R5: Jain is on slowdown vector; definition written to docs/KNEE_EXPLANATION.md.
+R6: Retry storm on full trace, rho 0.8-1.3, timeout=2*p99@rho=0.2, collapse_threshold from sweep.
 """
 
 import json
@@ -13,35 +20,41 @@ from engine.simulator import Simulator
 from engine.sweep import run_sweep
 
 
+# ---------------------------------------------------------------------------
+# Analytic trace parameters (R2: derived once from full EPA trace)
+# ---------------------------------------------------------------------------
+def _epa_params():
+    df = pd.read_parquet("data/processed/epa.parquet", columns=["ts", "service_time_s"])
+    span = float(df["ts"].iloc[-1] - df["ts"].iloc[0])
+    lam = len(df) / span
+    es = float(df["service_time_s"].mean())
+    es2 = float((df["service_time_s"] ** 2).mean())
+    cv2 = es2 / es ** 2 - 1.0
+    return lam, es, es2, cv2, span, len(df)
+
+
 def precompute():
     results_dir = Path("results/presets")
     results_dir.mkdir(parents=True, exist_ok=True)
 
-    print("Computing preset windows programmatically...")
+    print("Loading EPA trace parameters (R2)...")
+    lam, es, es2, cv2, span, n_epa = _epa_params()
+    c1 = 1
+    print(f"  lam={lam:.6f} req/s  ES={es*1000:.4f} ms  ES2={es2*1e6:.4f} us2  cv2={cv2:.4f}  N={n_epa}")
 
-    # 1. Baseline: Median-load 1-hour window on epa
+    # R2: rho_grid for sweep (c=1)
+    rho_grid = np.logspace(np.log10(0.02), np.log10(1.3), 25).tolist()
+
+    # -----------------------------------------------------------------------
+    # PRESET 1: Baseline Workload
+    # -----------------------------------------------------------------------
+    print("Generating baseline preset...")
     df_epa = pd.read_parquet("data/processed/epa.parquet", columns=["ts"])
     bins_1h = np.arange(df_epa["ts"].iloc[0], df_epa["ts"].iloc[-1], 3600.0)
     c_1h, e_1h = np.histogram(df_epa["ts"].values, bins=bins_1h)
     med_idx = int(np.argmin(np.abs(c_1h - np.median(c_1h))))
     baseline_start = float(e_1h[med_idx])
 
-    # 2. Flash crowd: Busiest 10-minute window on nasa_jul95
-    df_jul = pd.read_parquet("data/processed/nasa_jul95.parquet", columns=["ts"])
-    bins_10m = np.arange(df_jul["ts"].iloc[0], df_jul["ts"].iloc[-1], 600.0)
-    c_10m, e_10m = np.histogram(df_jul["ts"].values, bins=bins_10m)
-    flash_idx = int(np.argmax(c_10m))
-    flash_start = float(e_10m[flash_idx])
-
-    # 3. Outage & recovery: Hurricane Erin shutdown gap on nasa_aug95
-    df_aug = pd.read_parquet("data/processed/nasa_aug95.parquet", columns=["ts"])
-    gaps = np.diff(df_aug["ts"].values)
-    max_gap_idx = int(np.argmax(gaps))
-    outage_start = float(df_aug["ts"].iloc[max_gap_idx] - 300.0)
-    outage_dur = float(gaps[max_gap_idx] + 1200.0)
-
-    # PRESET 1: Baseline Workload
-    print("Generating baseline preset...")
     baseline_shootout = {}
     for pol in ["fcfs", "sjf", "rr", "static_priority"]:
         cfg = SimulationConfig(
@@ -51,7 +64,7 @@ def precompute():
             load_multiplier=1.0,
             window_start_s=baseline_start,
             window_duration_s=3600.0,
-            max_requests=5000
+            max_requests=None  # R1: full trace
         )
         res = Simulator(cfg).run()
         baseline_shootout[pol] = res.to_dict()
@@ -59,7 +72,7 @@ def precompute():
     p_baseline = {
         "id": "baseline",
         "title": "Baseline Workload (Median-Load Hour)",
-        "description": "Standard operational load sampled from the median-volume 1-hour window comparing baseline policies.",
+        "description": "Standard operational load from median-volume 1-hour window, all policies, max_requests=None.",
         "config": {
             "trace_name": "epa",
             "window_start_s": baseline_start,
@@ -71,9 +84,18 @@ def precompute():
     }
     with open(results_dir / "baseline.json", "w") as f:
         json.dump(p_baseline, f, indent=2)
+    print("  baseline done")
 
+    # -----------------------------------------------------------------------
     # PRESET 2: Flash Crowd
+    # -----------------------------------------------------------------------
     print("Generating flash crowd preset...")
+    df_jul = pd.read_parquet("data/processed/nasa_jul95.parquet", columns=["ts"])
+    bins_10m = np.arange(df_jul["ts"].iloc[0], df_jul["ts"].iloc[-1], 600.0)
+    c_10m, e_10m = np.histogram(df_jul["ts"].values, bins=bins_10m)
+    flash_idx = int(np.argmax(c_10m))
+    flash_start = float(e_10m[flash_idx])
+
     flash_shootout = {}
     for pol in ["fcfs", "sjf", "static_priority", "mlfq"]:
         cfg = SimulationConfig(
@@ -84,7 +106,7 @@ def precompute():
             queue_capacity=1000,
             window_start_s=flash_start,
             window_duration_s=600.0,
-            max_requests=10000
+            max_requests=None  # R1: full window
         )
         res = Simulator(cfg).run()
         flash_shootout[pol] = res.to_dict()
@@ -92,7 +114,7 @@ def precompute():
     p_flash = {
         "id": "flash_crowd",
         "title": "Flash Crowd (Busiest 10-Minute Window)",
-        "description": "Peak arrival surge on NASA July trace under 5x load compression driving queues to high utilization.",
+        "description": "Peak arrival surge on NASA July trace under 5x load compression.",
         "config": {
             "trace_name": "nasa_jul95",
             "window_start_s": flash_start,
@@ -104,17 +126,17 @@ def precompute():
     }
     with open(results_dir / "flash_crowd.json", "w") as f:
         json.dump(p_flash, f, indent=2)
+    print("  flash crowd done")
 
-    # PRESET 3: Outage and Recovery — Outage injection on real arrivals (F1b)
-    print("Generating outage-and-recovery preset (downtime injection)...")
-    # NASA Jul95 busiest 30-min: start=397800, dur=1800 (trace time), mult=34.7 for rho~0.6
-    # Sim time = trace_time / mult. Downtime at 10min trace = 600s trace = 600/34.7 ≈ 17.3s sim.
-    # 2-min downtime = 120s trace = 120/34.7 ≈ 3.46s sim. End = 17.3 + 3.46 = 20.76s sim.
+    # -----------------------------------------------------------------------
+    # PRESET 3: Outage and Recovery
+    # -----------------------------------------------------------------------
+    print("Generating outage-and-recovery preset...")
     jul95_outage_start = 397800.0
     jul95_outage_dur = 1800.0
     jul95_mult = 34.7
-    dt_start_sim = 600.0 / jul95_mult   # ~17.29 sim-sec
-    dt_end_sim = 720.0 / jul95_mult     # ~20.75 sim-sec
+    dt_start_sim = 600.0 / jul95_mult
+    dt_end_sim = 720.0 / jul95_mult
     outage_policies = ["fcfs", "sjf", "static_priority"]
     outage_results = {}
     for pol in outage_policies:
@@ -144,7 +166,12 @@ def precompute():
     p_outage = {
         "id": "outage_recovery",
         "title": "Outage injection on real arrivals",
-        "description": f"NASA Jul95 busiest 30-min (trace), c=1, mult=34.7x (rho~0.6). Server downtime sim_time [{dt_start_sim:.2f}s,{dt_end_sim:.2f}s] = trace 600-720s. FCFS peak backlog={outage_results['fcfs']['peak_backlog']}, drain_time={outage_results['fcfs']['drain_time_s']}s.",
+        "description": (
+            f"NASA Jul95 busiest 30-min (trace), c=1, mult={jul95_mult}x (rho~0.6). "
+            f"Server downtime sim_time [{dt_start_sim:.2f}s,{dt_end_sim:.2f}s] = trace 600-720s. "
+            f"FCFS peak backlog={outage_results['fcfs']['peak_backlog']}, "
+            f"drain_time={outage_results['fcfs']['drain_time_s']}s."
+        ),
         "config": {
             "trace_name": "nasa_jul95",
             "window_start_s": jul95_outage_start,
@@ -160,75 +187,109 @@ def precompute():
     }
     with open(results_dir / "outage_recovery.json", "w") as f:
         json.dump(p_outage, f, indent=2)
+    print("  outage done")
 
-    # PRESET 4: Load Sweep to Breaking Point — FCFS + SJF (F1d)
-    print("Generating load sweep preset (FCFS + SJF)...")
-    mults = np.logspace(np.log10(1.0), np.log10(1300.0), 25).tolist()
+    # -----------------------------------------------------------------------
+    # PRESET 4: Load Sweep — R2/R3/R4: rho_grid, analytic values, FCFS+SJF
+    # -----------------------------------------------------------------------
+    print("Generating load sweep preset (FCFS + SJF, rho_grid R2/R3/R4)...")
     fcfs_sweep = run_sweep(
         trace_path="data/processed/epa.parquet",
         policy="fcfs",
         num_servers=1,
-        multipliers=mults,
+        rho_grid=rho_grid,
         slo_target_s=0.500,
-        max_requests=4000,
-        workers=8
+        max_requests=None,  # R1
+        workers=8,
+        lam_analytic=lam,
+        es_analytic=es,
     )
     sjf_sweep = run_sweep(
         trace_path="data/processed/epa.parquet",
         policy="sjf",
         num_servers=1,
-        multipliers=mults,
+        rho_grid=rho_grid,
         slo_target_s=0.500,
-        max_requests=4000,
-        workers=8
+        max_requests=None,  # R1
+        workers=8,
+        lam_analytic=lam,
+        es_analytic=es,
     )
-    # Compare knee positions
-    fcfs_knee = fcfs_sweep.get("special_points", {}).get("knee", {})
-    sjf_knee = sjf_sweep.get("special_points", {}).get("knee", {})
-    fcfs_knee_mult = fcfs_knee.get("load_multiplier", 0) if fcfs_knee else 0
-    sjf_knee_mult = sjf_knee.get("load_multiplier", 0) if sjf_knee else 0
+    # R4: record both knees and breaking points
+    fcfs_knee = fcfs_sweep.get("special_points", {}).get("knee") or {}
+    sjf_knee = sjf_sweep.get("special_points", {}).get("knee") or {}
+    fcfs_break = fcfs_sweep.get("special_points", {}).get("breaking") or {}
+    sjf_break = sjf_sweep.get("special_points", {}).get("breaking") or {}
+    fcfs_knee_rho = fcfs_knee.get("rho", 0)
+    sjf_knee_rho = sjf_knee.get("rho", 0)
+    print(f"  FCFS knee rho={fcfs_knee_rho:.4f}  SJF knee rho={sjf_knee_rho:.4f}")
+    print(f"  FCFS break rho={fcfs_break.get('rho',0):.4f}  SJF break rho={sjf_break.get('rho',0):.4f}")
+
+    if sjf_knee_rho > 0 and fcfs_knee_rho > 0 and sjf_knee_rho <= fcfs_knee_rho:
+        with open("STATE.md", "a") as sm:
+            sm.write(
+                f"\nOPEN: SJF knee rho({sjf_knee_rho:.4f}) NOT right of FCFS knee rho({fcfs_knee_rho:.4f}) — recorded honestly.\n"
+            )
 
     p_sweep = {
         "id": "load_sweep",
-        "title": "Load Sweep to Breaking Point",
-        "description": "25-point logarithmic load sweep from 1x to 400x isolating the Knee, Inflection, and Breaking points (FCFS and SJF, c=1).",
+        "title": "Load Sweep to Breaking Point (rho-grid, analytic axes)",
+        "description": (
+            f"25-point rho_grid sweep (rho 0.02–1.3) on EPA full trace (N={n_epa}). "
+            f"lam={lam:.6f} req/s, ES={es*1000:.4f} ms, cv2={cv2:.4f}. "
+            f"x-axis=rho_analytic (not sim-measured). max_requests=None."
+        ),
         "config": {
             "trace_name": "epa",
             "num_servers": 1,
-            "slo_target_s": 0.500
+            "slo_target_s": 0.500,
+            "rho_grid_min": min(rho_grid),
+            "rho_grid_max": max(rho_grid),
+            "lam_analytic": lam,
+            "es_analytic": es,
+            "es2_analytic": es2,
+            "cv2": cv2,
+            "max_requests": None,
         },
         "sweep": {
             "fcfs": fcfs_sweep,
             "sjf": sjf_sweep
+        },
+        "comparison": {
+            "fcfs_knee_rho": fcfs_knee_rho,
+            "sjf_knee_rho": sjf_knee_rho,
+            "fcfs_breaking_rho": fcfs_break.get("rho", None),
+            "sjf_breaking_rho": sjf_break.get("rho", None),
+            "sjf_knee_right_of_fcfs": sjf_knee_rho > fcfs_knee_rho,
         }
     }
     with open(results_dir / "load_sweep.json", "w") as f:
         json.dump(p_sweep, f, indent=2)
+    print("  load sweep done")
 
-    if sjf_knee_mult > 0 and fcfs_knee_mult > 0 and sjf_knee_mult <= fcfs_knee_mult:
-        with open("STATE.md", "a") as sm:
-            sm.write(f"\nOPEN: SJF knee ({sjf_knee_mult:.1f}x) NOT right of FCFS knee ({fcfs_knee_mult:.1f}x) — recorded honestly.\n")
-    print(f"  FCFS knee: {fcfs_knee_mult:.1f}x  SJF knee: {sjf_knee_mult:.1f}x")
-
-    # PRESET 5: Retry Storm — sweep 10 multipliers (F1c)
-    print("Generating retry storm preset (sweep)...")
-    # Baseline p99 at mult=1 for timeout setting
+    # -----------------------------------------------------------------------
+    # PRESET 5: Retry Storm — R6: full trace, rho 0.8-1.3, timeout=2*p99@rho=0.2
+    # -----------------------------------------------------------------------
+    print("Generating retry storm preset (R6: full trace, rho 0.8-1.3)...")
+    # Timeout: 2 * p99 at rho=0.2 (analytic mult)
+    mult_02 = 0.2 * c1 / (lam * es)
     cfg_base = SimulationConfig(
         trace_path="data/processed/epa.parquet",
         policy="fcfs",
         num_servers=1,
-        load_multiplier=1.0,
-        max_requests=4000
+        load_multiplier=mult_02,
+        max_requests=None  # R1
     )
     base_res = Simulator(cfg_base).run()
     base_p99 = base_res.latency_p99  # seconds
     timeout_s = 2.0 * base_p99
-    print(f"  Baseline p99={base_p99*1000:.1f}ms → timeout={timeout_s*1000:.1f}ms")
+    print(f"  rho=0.2 mult={mult_02:.1f}x p99={base_p99*1000:.1f}ms → timeout={timeout_s*1000:.1f}ms")
 
-    retry_mults = np.linspace(800, 1200, 10).tolist()
+    # R6: 10 multipliers with rho 0.8-1.3
+    rho_retry = np.linspace(0.8, 1.3, 10).tolist()
+    mults_retry = [rho * c1 / (lam * es) for rho in rho_retry]
     sweep_data = []
-    for mult in retry_mults:
-        # Without retries
+    for rho_t, mult in zip(rho_retry, mults_retry):
         cfg_no = SimulationConfig(
             trace_path="data/processed/epa.parquet",
             policy="fcfs",
@@ -237,10 +298,9 @@ def precompute():
             client_timeout=timeout_s,
             retry_on_timeout=False,
             max_retries=0,
-            max_requests=4000
+            max_requests=None  # R1
         )
         res_no = Simulator(cfg_no).run()
-        # With retries
         cfg_yes = SimulationConfig(
             trace_path="data/processed/epa.parquet",
             policy="fcfs",
@@ -251,65 +311,101 @@ def precompute():
             max_retries=3,
             backoff_base_s=0.05,
             backoff_multiplier=2.0,
-            max_requests=4000
+            max_requests=None  # R1
         )
         res_yes = Simulator(cfg_yes).run()
+
+        # R6: amplification = total attempts / unique requests
+        no_arr = res_no.total_arrivals
+        yes_arr = res_yes.total_arrivals
+        amp = yes_arr / max(no_arr, 1)
+
         sweep_data.append({
-            "mult": round(float(mult), 1),
+            "rho_analytic": round(rho_t, 4),
+            "mult": round(float(mult), 2),
+            "offered_req_s_analytic": round(rho_t * c1 / es, 6),
             "without_retries": res_no.to_dict(),
-            "with_retries": res_yes.to_dict()
+            "with_retries": res_yes.to_dict(),
+            "amplification": round(amp, 4),
         })
 
-    # Check amplification at heaviest multiplier
-    heaviest = sweep_data[-1]
-    no_arr = heaviest["without_retries"].get("total_arrivals", 1)
-    yes_arr = heaviest["with_retries"].get("total_arrivals", 1)
-    amplification = yes_arr / max(no_arr, 1)
-    print(f"  Retry amplification at {heaviest['mult']}x: {amplification:.2f}x")
+    # R6: collapse_threshold = offered load where goodput drops below 95% of its peak
+    goodputs_no = [pt["without_retries"]["goodput_req_per_s"] for pt in sweep_data]
+    peak_goodput = max(goodputs_no)
+    collapse_threshold_str = "not observed in rho 0.8-1.3"
+    for pt in sweep_data:
+        if pt["without_retries"]["goodput_req_per_s"] < 0.95 * peak_goodput:
+            collapse_threshold_str = (
+                f"rho>{pt['rho_analytic']:.4f} "
+                f"(offered={pt['offered_req_s_analytic']:.4f} req/s, "
+                f"goodput={pt['without_retries']['goodput_req_per_s']:.4f} req/s)"
+            )
+            break
+
+    # R6: amplification at rho>=1.0
+    heaviest_overload = [pt for pt in sweep_data if pt["rho_analytic"] >= 1.0]
+    if heaviest_overload:
+        heaviest = heaviest_overload[-1]
+    else:
+        heaviest = sweep_data[-1]
+    amplification = heaviest["amplification"]
+    print(f"  Amplification at rho={heaviest['rho_analytic']:.2f}: {amplification:.3f}x")
     if amplification < 1.5:
         with open("STATE.md", "a") as sm:
-            sm.write(f"\nOPEN: retry_storm amplification={amplification:.2f} < 1.5 at mult={heaviest['mult']}x — not fabricated.\n")
+            sm.write(
+                f"\nOPEN: retry_storm amplification={amplification:.3f} < 1.5 at rho={heaviest['rho_analytic']:.4f} — no metastable collapse observed on this trace.\n"
+            )
 
-    # Also keep old-style results (using mult~230x center)
-    center_data = min(sweep_data, key=lambda x: abs(x["mult"] - 230.0))
-    old_results = {
-        "no_retries": center_data["without_retries"],
-        "with_retries": center_data["with_retries"]
-    }
+    # For backward compat: use midpoint as "results"
+    mid = sweep_data[len(sweep_data) // 2]
+    old_results = {"no_retries": mid["without_retries"], "with_retries": mid["with_retries"]}
 
     p_retry = {
         "id": "retry_storm",
         "title": "Retry Storm & Cascading Failure",
-        "description": f"c=1 EPA sweep mult 180x-310x (rho 0.85-1.1). Timeout={timeout_s*1000:.1f}ms (2x baseline p99). Retries=3, backoff 50ms*2^n. Amplification at {heaviest['mult']}x: {amplification:.2f}x.",
+        "description": (
+            f"c=1 EPA full trace (N={n_epa}), rho 0.8-1.3 (10 points). "
+            f"Timeout={timeout_s*1000:.1f}ms (2x p99 at rho=0.2). "
+            f"Retries=3, exp backoff+jitter (50ms*2^n). "
+            f"Amplification at rho={heaviest['rho_analytic']:.2f}: {amplification:.3f}x. "
+            f"collapse_threshold: {collapse_threshold_str}."
+        ),
         "config": {
             "trace_name": "epa",
             "num_servers": 1,
-            "timeout_s": round(timeout_s, 4),
+            "timeout_s": round(timeout_s, 6),
             "max_retries": 3,
             "backoff_base_s": 0.05,
-            "backoff_multiplier": 2.0
+            "backoff_multiplier": 2.0,
+            "rho_range": [0.8, 1.3],
+            "lam_analytic": lam,
+            "es_analytic": es,
+            "max_requests": None,
         },
         "results": old_results,
         "sweep_data": sweep_data,
-        "amplification_at_max_mult": round(amplification, 3)
+        "amplification_at_max_overload": round(amplification, 4),
+        "collapse_threshold": collapse_threshold_str,
     }
     with open(results_dir / "retry_storm.json", "w") as f:
         json.dump(p_retry, f, indent=2)
+    print("  retry storm done")
 
-    # PRESET 6: Policy Shootout — 4 multipliers, 6 policies, c=2 (F1a)
-    print("Generating full policy shootout preset (multi-multiplier)...")
-    # EPA base rate=0.5527 req/s
+    # -----------------------------------------------------------------------
+    # PRESET 6: Policy Shootout (R1: max_requests=None)
+    # -----------------------------------------------------------------------
+    print("Generating full policy shootout preset...")
+    # Use rho-analytic multipliers for shootout load points
+    shootout_rhos = {"knee": 0.4, "inflection": 0.6, "breaking": 0.8, "heavy": 1.1}
     shootout_multipliers = {
-        "knee": 800.0,
-        "inflection": 950.0,
-        "breaking": 1050.0,
-        "1200x": 1200.0
+        label: rho * 2 / (lam * es)  # c=2 for shootout
+        for label, rho in shootout_rhos.items()
     }
     all_policies = ["fcfs", "sjf", "srtf", "rr", "static_priority", "mlfq"]
     by_multiplier = {}
 
     for label, mult in shootout_multipliers.items():
-        print(f"  Shootout mult={mult}x ({label})...")
+        print(f"  Shootout mult={mult:.0f}x (rho~{shootout_rhos[label]:.1f})...")
         mult_results = {}
         for pol in all_policies:
             try:
@@ -319,15 +415,13 @@ def precompute():
                     num_servers=2,
                     load_multiplier=float(mult),
                     queue_capacity=5000,
-                    max_requests=4000
+                    max_requests=None  # R1
                 )
                 res = Simulator(cfg).run()
                 mult_results[pol] = res.to_dict()
             except Exception as ex:
                 print(f"    SKIP {pol} at {label}: {ex}")
 
-        # Jain index already in result dict
-        # Rank by p99
         ranked = sorted(
             mult_results.items(),
             key=lambda item: (item[1]["latency"]["p99_ms"], -item[1]["goodput_req_per_s"])
@@ -335,34 +429,41 @@ def precompute():
         p99_values = [v["latency"]["p99_ms"] for v in mult_results.values() if v]
         by_multiplier[label] = {
             "multiplier": mult,
+            "rho_analytic": shootout_rhos[label],
             "results": mult_results,
             "ranking": [pol for pol, _ in ranked],
             "best_p99": min(p99_values) if p99_values else 0,
             "worst_p99": max(p99_values) if p99_values else 0
         }
 
-    # Spread check: for at least 1 multiplier, best_p99 < worst_p99 * 0.8
+    # Spread check: >=20% spread at some rho in [0.7,1.1]
     spread_ok = any(
-        v["best_p99"] < v["worst_p99"] * 0.8
-        for v in by_multiplier.values()
-        if v["worst_p99"] > 0
+        v["best_p99"] < v["worst_p99"] * 0.80
+        for label, v in by_multiplier.items()
+        if v["worst_p99"] > 0 and 0.7 <= shootout_rhos.get(label, 0) <= 1.1
     )
     if not spread_ok:
-        raise RuntimeError("policy_shootout: spread < 20%")
+        raise RuntimeError("policy_shootout: spread < 20% at all rho in [0.7,1.1]")
 
-    # Flat "results" for backward compat — use 350x
-    flat_results = by_multiplier["1200x"]["results"]
-    flat_ranked = by_multiplier["1200x"]["ranking"]
+    flat_results = by_multiplier["heavy"]["results"]
+    flat_ranked = by_multiplier["heavy"]["ranking"]
 
     p_shootout = {
         "id": "policy_shootout",
         "title": "Comprehensive Policy Shootout",
-        "description": "EPA trace, c=2. 6 policies at 4 load points: knee=800x, inflection=950x, breaking=1050x, 1200x. Checks >=20% p99 spread.",
+        "description": (
+            f"EPA trace (N={n_epa}), c=2, max_requests=None. 6 policies at 4 rho points "
+            f"(knee~0.4, inflection~0.6, breaking~0.8, heavy~1.1). Checks >=20% p99 spread."
+        ),
         "config": {
             "trace_name": "epa",
             "num_servers": 2,
             "policies": all_policies,
-            "multipliers": shootout_multipliers
+            "rho_points": shootout_rhos,
+            "multipliers": {k: round(v, 2) for k, v in shootout_multipliers.items()},
+            "lam_analytic": lam,
+            "es_analytic": es,
+            "max_requests": None,
         },
         "results": flat_results,
         "ranking": flat_ranked,
@@ -370,8 +471,10 @@ def precompute():
     }
     with open(results_dir / "policy_shootout.json", "w") as f:
         json.dump(p_shootout, f, indent=2)
+    print("  shootout done")
 
     print("All presets precomputed successfully into results/presets/")
+    return lam, es, es2, cv2
 
 
 if __name__ == "__main__":

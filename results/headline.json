@@ -1,41 +1,41 @@
 {
   "phase_transitions": {
     "knee": {
-      "load_multiplier": 530.5184,
-      "offered_req_s": 45.94,
-      "rho": 0.3457,
-      "p99_ms": 1082.16
+      "load_multiplier": 67.5395,
+      "offered_req_s": 37.328041,
+      "rho_analytic": 0.271707,
+      "p99_ms": 285.84
     },
     "inflection": {
-      "load_multiplier": 291.8805,
-      "offered_req_s": 29.91,
-      "rho": 0.225,
-      "p99_ms": 489.76
+      "load_multiplier": 113.8078,
+      "offered_req_s": 62.899817,
+      "rho_analytic": 0.457841,
+      "p99_ms": 6711.36
     },
     "breaking": {
-      "load_multiplier": 393.5073,
-      "offered_req_s": 37.41,
-      "rho": 0.2815,
-      "p99_ms": 640.65,
+      "load_multiplier": 95.6388,
+      "offered_req_s": 52.858091,
+      "rho_analytic": 0.384749,
+      "p99_ms": 958.6,
       "reason": "p99 > SLO"
     }
   },
   "shootout": {
     "best_p99": {
       "policy": "fcfs",
-      "p99_ms": 706.65
+      "p99_ms": 19220.39
     },
     "worst_p99": {
-      "policy": "static_priority",
-      "p99_ms": 1487.55
+      "policy": "mlfq",
+      "p99_ms": 52498.37
     },
     "best_fairness": {
-      "policy": "sjf",
-      "jain_index": 0.3454
+      "policy": "rr",
+      "jain_index": 0.6741
     },
     "worst_fairness": {
-      "policy": "mlfq",
-      "jain_index": 0.2033
+      "policy": "srtf",
+      "jain_index": 0.0572
     }
   },
   "outage_recovery": {
@@ -44,10 +44,10 @@
     "fcfs_peak_backlog": 305
   },
   "retry_storm": {
-    "traffic_amplification_ratio": 1.64,
-    "collapse_threshold": "load > 393.5073x (goodput = 92.1 req/s)"
+    "traffic_amplification_ratio": 2.86,
+    "collapse_threshold": "rho>0.8000 (offered=109.9067 req/s, goodput=83.4800 req/s)"
   },
   "simulation_throughput": {
-    "events_per_second": 390430
+    "events_per_second": 293549
   }
 }

@@ -30,6 +30,8 @@ def run_sweep(
     trace_path: str,
     policy: str = "fcfs",
     num_servers: int = 4,
+    # rho_grid takes precedence over multipliers when provided
+    rho_grid: Optional[List[float]] = None,
     multipliers: Optional[List[float]] = None,
     num_points: int = 25,
     slo_target_s: float = 0.500,
@@ -41,13 +43,40 @@ def run_sweep(
     load_balancer: str = "central_queue",
     admission_policy: str = "drop_tail",
     workers: int = 8,
+    # analytic trace parameters for rho-grid mode
+    lam_analytic: Optional[float] = None,
+    es_analytic: Optional[float] = None,
 ) -> Dict[str, Any]:
     """
-    Executes a log-spaced load sweep and calculates phase transition points:
-    - Knee point (maximum curvature via Kneedle)
-    - Inflection point (second derivative sign change)
-    - Breaking point (SLO breach or goodput < 0.95 * offered_load)
+    Executes a load sweep and calculates phase transition points.
+
+    R2: When rho_grid is provided (preferred), multipliers are derived analytically:
+        mult = rho * c / (lam_analytic * es_analytic)
+    so that rho_analytic = mult * lam_analytic * es_analytic / c is exactly the
+    requested rho — not a sim-measured approximation.
+
+    Phase transitions (R3):
+    - Knee: KneeLocator(x=rho_analytic, y=p99, curve='convex', direction='increasing')
+    - Inflection: second-derivative sign change on smoothed curve, restricted to rho<=1.0
+    - Breaking: lowest rho with p99>SLO or goodput<95% offered
     """
+    import pandas as pd
+
+    # Derive lam and ES from trace if not provided (for rho-grid mode)
+    if rho_grid is not None and (lam_analytic is None or es_analytic is None):
+        df_tr = pd.read_parquet(trace_path, columns=["ts", "service_time_s"])
+        span = float(df_tr["ts"].iloc[-1] - df_tr["ts"].iloc[0])
+        lam_analytic = len(df_tr) / span
+        es_analytic = float(df_tr["service_time_s"].mean())
+
+    if rho_grid is not None:
+        # R2: build multipliers analytically from rho targets
+        c = float(num_servers)
+        multipliers = [
+            float(rho * c / (lam_analytic * es_analytic))
+            for rho in rho_grid
+        ]
+
     if multipliers is None:
         multipliers = np.logspace(np.log10(0.1), np.log10(50.0), num_points).tolist()
 
@@ -76,18 +105,27 @@ def run_sweep(
     results.sort(key=lambda r: r["load_multiplier"])
 
     sweep_points = []
-    for r in results:
-        offered = r["offered_load_req_per_s"]
-        mean_st = r.get("mean_service_time_s", 0.010)
-        c = r["num_servers"]
-        rho = (offered * mean_st) / float(c) if c > 0 else 0.0
-        
+    for i, r in enumerate(results):
+        # R2: use analytic values, not sim-derived ones
+        if rho_grid is not None and lam_analytic is not None and es_analytic is not None:
+            rho_a = float(rho_grid[i]) if i < len(rho_grid) else (
+                r["load_multiplier"] * lam_analytic * es_analytic / float(num_servers)
+            )
+            offered_a = r["load_multiplier"] * lam_analytic
+        else:
+            offered_a = r["offered_load_req_per_s"]
+            mean_st = r.get("mean_service_time_s", 0.010)
+            c = r["num_servers"]
+            rho_a = (offered_a * mean_st) / float(c) if c > 0 else 0.0
+
         pt = {
             "load_multiplier": r["load_multiplier"],
-            "offered_load_req_per_s": round(offered, 2),
-            "throughput_req_per_s": round(r["throughput_req_per_s"], 2),
-            "goodput_req_per_s": round(r["goodput_req_per_s"], 2),
-            "rho": round(rho, 4),
+            "offered_load_req_per_s": round(r["offered_load_req_per_s"], 4),
+            "offered_req_s_analytic": round(offered_a, 6),
+            "throughput_req_per_s": round(r["throughput_req_per_s"], 4),
+            "goodput_req_per_s": round(r["goodput_req_per_s"], 4),
+            "rho": round(rho_a, 6),
+            "rho_analytic": round(rho_a, 6),
             "latency_p50_ms": r["latency"]["p50_ms"],
             "latency_p95_ms": r["latency"]["p95_ms"],
             "latency_p99_ms": r["latency"]["p99_ms"],
@@ -102,68 +140,86 @@ def run_sweep(
         }
         sweep_points.append(pt)
 
-    x_offered = [p["offered_load_req_per_s"] for p in sweep_points]
+    # R3: Use rho_analytic as x-axis for phase detection
+    x_rho = [p["rho_analytic"] for p in sweep_points]
+    x_offered = [p["offered_req_s_analytic"] for p in sweep_points]
     y_p99 = [p["latency_p99_ms"] for p in sweep_points]
     slo_ms = slo_target_s * 1000.0
 
-    # 1. KNEE POINT
+    # 1. KNEE POINT (R3: x=rho_analytic, restricted to rho<=breaking_rho+1grid to avoid plateau artifact)
+    # First find breaking rho to set the ceiling for knee search
+    _break_rho = 1.0
+    for pt in sweep_points:
+        p99_breach = pt["latency_p99_ms"] > slo_ms
+        goodput_collapse = pt["goodput_req_per_s"] < (0.95 * pt["offered_req_s_analytic"])
+        if p99_breach or goodput_collapse:
+            _break_rho = pt["rho_analytic"]
+            break
+
     knee_point = None
     try:
-        kl = KneeLocator(x_offered, y_p99, curve="convex", direction="increasing", S=1.0)
-        knee_x = kl.knee
-        if knee_x is not None:
-            idx = min(range(len(x_offered)), key=lambda i: abs(x_offered[i] - knee_x))
-            knee_point = {
-                "load_multiplier": sweep_points[idx]["load_multiplier"],
-                "offered_load_req_per_s": sweep_points[idx]["offered_load_req_per_s"],
-                "p99_ms": sweep_points[idx]["latency_p99_ms"],
-                "rho": sweep_points[idx]["rho"],
-                "description": "Knee: onset of non-linear queueing delay expansion (maximum curvature)"
-            }
-    except Exception:
-        pass
-
-    # 2. INFLECTION POINT (Sign change of second derivative on smoothed curve)
-    inflection_point = None
-    try:
-        if len(sweep_points) >= 5:
-            # Use strictly monotonic load multipliers for numerical stability
-            x_arr = np.array([p["load_multiplier"] for p in sweep_points], dtype=float)
-            y_arr = np.array([p["latency_p99_ms"] for p in sweep_points], dtype=float)
-            
-            spline = UnivariateSpline(x_arr, y_arr, s=len(x_arr) * 20.0, k=3)
-            d2 = spline.derivative(n=2)
-            x_eval = np.linspace(float(min(x_arr)), float(max(x_arr)), 300)
-            d2_vals = d2(x_eval)
-            
-            # Find zero-crossings (sign changes of 2nd derivative)
-            sign_changes = np.where(np.diff(np.sign(d2_vals)))[0]
-            if len(sign_changes) > 0:
-                # Select the sign change with highest curvature transition
-                best_sc = sign_changes[len(sign_changes) // 2]
-                inf_x = float(x_eval[best_sc])
-                idx = int(np.argmin(np.abs(x_arr - inf_x)))
-                inflection_point = {
+        x_arr_full = np.array(x_rho, dtype=float)
+        y_arr_full = np.array(y_p99, dtype=float)
+        # Restrict to rho <= breaking_rho (pre-saturation convex growth region)
+        mask_knee = x_arr_full <= _break_rho + 1e-9
+        x_knee_sub = x_arr_full[mask_knee].tolist()
+        y_knee_sub = y_arr_full[mask_knee].tolist()
+        if len(x_knee_sub) >= 3:
+            kl = KneeLocator(x_knee_sub, y_knee_sub, curve="convex", direction="increasing", S=1.0)
+            knee_x = kl.knee
+            if knee_x is not None:
+                idx = min(range(len(x_rho)), key=lambda i: abs(x_rho[i] - knee_x))
+                knee_point = {
                     "load_multiplier": sweep_points[idx]["load_multiplier"],
-                    "offered_load_req_per_s": sweep_points[idx]["offered_load_req_per_s"],
+                    "offered_load_req_per_s": sweep_points[idx]["offered_req_s_analytic"],
                     "p99_ms": sweep_points[idx]["latency_p99_ms"],
-                    "rho": sweep_points[idx]["rho"],
-                    "description": "Inflection point: sign change of second derivative (delay acceleration transition)"
+                    "rho": sweep_points[idx]["rho_analytic"],
+                    "description": "Knee: onset of non-linear queueing delay expansion (max curvature on rho vs p99, rho<=breaking_rho)"
                 }
     except Exception:
         pass
 
-    # 3. BREAKING POINT
+    # 2. INFLECTION POINT (R3: second-derivative sign change, rho<=1.0)
+    inflection_point = None
+    try:
+        if len(sweep_points) >= 5:
+            x_arr = np.array(x_rho, dtype=float)
+            y_arr = np.array(y_p99, dtype=float)
+            # Restrict to rho <= 1.0 for inflection search
+            mask = x_arr <= 1.0
+            x_sub = x_arr[mask]
+            y_sub = y_arr[mask]
+            if len(x_sub) >= 5:
+                spline = UnivariateSpline(x_sub, y_sub, s=len(x_sub) * 20.0, k=3)
+                d2 = spline.derivative(n=2)
+                x_eval = np.linspace(float(x_sub.min()), float(x_sub.max()), 300)
+                d2_vals = d2(x_eval)
+                sign_changes = np.where(np.diff(np.sign(d2_vals)))[0]
+                if len(sign_changes) > 0:
+                    best_sc = sign_changes[len(sign_changes) // 2]
+                    inf_x = float(x_eval[best_sc])
+                    idx = int(np.argmin(np.abs(x_arr - inf_x)))
+                    inflection_point = {
+                        "load_multiplier": sweep_points[idx]["load_multiplier"],
+                        "offered_load_req_per_s": sweep_points[idx]["offered_req_s_analytic"],
+                        "p99_ms": sweep_points[idx]["latency_p99_ms"],
+                        "rho": sweep_points[idx]["rho_analytic"],
+                        "description": "Inflection point: second-derivative sign change on rho-p99 curve (rho<=1.0)"
+                    }
+    except Exception:
+        pass
+
+    # 3. BREAKING POINT (R3: lowest rho with p99>SLO or goodput<95% offered)
     breaking_point = None
     for pt in sweep_points:
         p99_breach = pt["latency_p99_ms"] > slo_ms
-        goodput_collapse = pt["goodput_req_per_s"] < (0.95 * pt["offered_load_req_per_s"])
+        goodput_collapse = pt["goodput_req_per_s"] < (0.95 * pt["offered_req_s_analytic"])
         if p99_breach or goodput_collapse:
             breaking_point = {
                 "load_multiplier": pt["load_multiplier"],
-                "offered_load_req_per_s": pt["offered_load_req_per_s"],
+                "offered_load_req_per_s": pt["offered_req_s_analytic"],
                 "p99_ms": pt["latency_p99_ms"],
-                "rho": pt["rho"],
+                "rho": pt["rho_analytic"],
                 "reason": "p99 > SLO" if p99_breach and not goodput_collapse else (
                     "goodput < 95% offered" if goodput_collapse and not p99_breach else "both SLO breach and goodput collapse"
                 ),
@@ -175,6 +231,8 @@ def run_sweep(
         "policy": policy,
         "num_servers": num_servers,
         "slo_target_s": slo_target_s,
+        "lam_analytic": lam_analytic,
+        "es_analytic": es_analytic,
         "points": sweep_points,
         "special_points": {
             "knee": knee_point,

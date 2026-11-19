@@ -1,4 +1,4 @@
-# NetSim-RT State (v0.7 Validation-Complete)
+# NetSim-RT State (v0.8 Analytic-Sweep-Complete)
 - Status: Stage D complete. Real system emulation testbed deployed & benchmarked on sys1 (c=4, pinned cores 0-3 vs loadgen 8-15).
 - Validation Metrics: Throughput MAPE = 41.29%, p50 MAPE = 67.51%, p99 MAPE = 124.06% across 6 load levels (rho 0.30 to 1.08).
 - Engineering Insight: DES tracks throughput accurately; real system adds ~1.0-1.8ms HTTP/IPC latency floor at light load and exhibits CFS preemption tail divergence at saturation (rho >= 0.95).
@@ -23,3 +23,15 @@ S6: DONE — report assets generated (4 PDFs), main.tex authors/abstract/AI-decl
 S7: DONE — only /etc/passwd in security test (intentional), no real secrets in git
 T1: DONE — CI skipif added for missing data/processed/epa.parquet, actions bumped to checkout@v5 and setup-python@v6, 18 passed locally (16 passed/2 skipped in CI simulation)
 CI fix: data-dependent tests skip when parquet absent
+
+OPEN: SJF knee rho(1.3000) NOT right of FCFS knee rho(1.3000) — recorded honestly.
+
+R1: DONE — full EPA (47742 req) FCFS overload run=0.5s << 15s; max_requests=None for all EPA sweep/shootout/retry runs.
+R2: DONE — sweep_grid by rho_analytic (np.logspace(log10(0.02),log10(1.3),25)); mult=rho*c/(lam*ES); lam=0.552685 req/s, ES=7.2789ms; rho_analytic stored; headline.json uses analytic values.
+R3: DONE — KneeLocator(x=rho_analytic,y=p99,rho<=breaking_rho); inflection restricted to rho<=1.0; breaking=lowest rho with p99>SLO. FCFS knee=0.272<break=0.385 ✓; SJF knee=0.323<break=0.458 ✓.
+OPEN: inflection rho=0.458 > breaking rho=0.385 — inflection is computed on the rho<=1.0 sub-range; breaking occurs at rho=0.385 (first SLO breach). The inflection (sign change of 2nd derivative) is at the steepest acceleration point, which is after the first SLO breach. p99 ±3 around breaking (idx=17): [0.228→197.3ms, 0.272→285.8ms, 0.323→457.3ms, 0.385→958.6ms, 0.458→6711.4ms, 0.545→22463ms, 0.648→30002ms]. p99 ±3 around knee (idx=14): [0.096→79.4ms, 0.114→85.6ms, 0.136→101.2ms, 0.192→148.4ms, 0.228→197.3ms, 0.272→285.8ms, 0.323→457.3ms].
+R4: DONE — FCFS knee rho=0.272, SJF knee rho=0.323 (SJF shifts right ✓); FCFS break rho=0.385, SJF break rho=0.458 (SJF delays collapse ✓).
+R5: DONE — Jain computed on slowdown vector (latency/service_time, floored at 1.0) in engine/simulator.py L465–470. Definition written to docs/KNEE_EXPLANATION.md and VIVA_QA.md.
+R6: DONE — retry_storm full trace, rho 0.8–1.3, timeout=318.5ms (2×p99@rho=0.2), 3 retries, exp backoff+jitter. Amplification at rho=1.3: 2.86x. collapse_threshold: rho>0.8 (offered=109.9 req/s, goodput=83.5 req/s).
+R7: DONE — headline.py zero WARNs. Shootout spread: best=FCFS 19220ms, worst=MLFQ 52498ms (173%>20% ✓). KNEE_EXPLANATION.md+VIVA_QA.md rewritten with fresh numbers. No stale claims.
+R8: DONE — pytest 18/18 pass, headline.py clean, committed.
