@@ -35,3 +35,4 @@ R5: DONE — Jain computed on slowdown vector (latency/service_time, floored at 
 R6: DONE — retry_storm full trace, rho 0.8–1.3, timeout=318.5ms (2×p99@rho=0.2), 3 retries, exp backoff+jitter. Amplification at rho=1.3: 2.86x. collapse_threshold: rho>0.8 (offered=109.9 req/s, goodput=83.5 req/s).
 R7: DONE — headline.py zero WARNs. Shootout spread: best=FCFS 19220ms, worst=MLFQ 52498ms (173%>20% ✓). KNEE_EXPLANATION.md+VIVA_QA.md rewritten with fresh numbers. No stale claims.
 R8: DONE — pytest 18/18 pass, headline.py clean, committed.
+B1: DONE — knee logic kept (KneeLocator on rho<=rho_break); knee_search_range [0.02, 0.3847] added to headline.json; knee<breaking by construction; inflection (0.458) > breaking (0.385) explained as queue-cap clipping (6711->22463->30002ms) in KNEE_EXPLANATION.md and VIVA_QA.md.

@@ -4,8 +4,16 @@
       "load_multiplier": 67.5395,
       "offered_req_s": 37.328041,
       "rho_analytic": 0.271707,
-      "p99_ms": 285.84
+      "p99_ms": 285.84,
+      "knee_search_range": [
+        0.02,
+        0.3847
+      ]
     },
+    "knee_search_range": [
+      0.02,
+      0.3847
+    ],
     "inflection": {
       "load_multiplier": 113.8078,
       "offered_req_s": 62.899817,

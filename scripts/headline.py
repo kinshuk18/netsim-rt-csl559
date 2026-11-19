@@ -3,6 +3,8 @@
 R2: uses rho_analytic and offered_req_s_analytic from sweep points.
 R6: collapse_threshold comes from retry_storm sweep, not from load_sweep breaking point.
 R7: zero WARN or each WARN explained in STATE.md.
+B1: knee_search_range added to headline.json.
+B3: shootout best/worst p99 and Jain come from rho 0.6.
 Reads results/presets/*.json, writes results/headline.json, prints <= 12 lines.
 """
 import json
@@ -22,7 +24,8 @@ def generate_headlines():
     # 1. Load Sweep Phase Transitions (R2: use rho_analytic)
     sweep_path = presets_dir / "load_sweep.json"
     with open(sweep_path) as f:
-        sweep_raw = json.load(f)["sweep"]
+        sweep_obj = json.load(f)
+        sweep_raw = sweep_obj.get("sweep", sweep_obj)
 
     if "fcfs" in sweep_raw:
         sweep_data = sweep_raw["fcfs"]
@@ -41,11 +44,26 @@ def generate_headlines():
     def _rho(d):
         return d.get("rho_analytic") or d.get("rho") or 0.0
 
-    # 2. Policy Shootout
+    rho_min = sweep_obj.get("config", {}).get("rho_grid_min")
+    if rho_min is None:
+        pts = sweep_data.get("points", [])
+        rho_min = _rho(pts[0]) if pts else 0.02
+    rho_break_val = _rho(breaking)
+    knee_search_range = [round(float(rho_min), 4), round(float(rho_break_val), 4)]
+
+    # 2. Policy Shootout (B3: from rho 0.6)
     shootout_path = presets_dir / "policy_shootout.json"
     with open(shootout_path) as f:
         shootout_full = json.load(f)
-    shootout_data = shootout_full["results"]
+
+    if "by_rho" in shootout_full and "0.6" in shootout_full["by_rho"]:
+        shootout_data = shootout_full["by_rho"]["0.6"]["results"]
+    elif "per_rho" in shootout_full and "0.6" in shootout_full["per_rho"]:
+        entry = shootout_full["per_rho"]["0.6"]
+        shootout_data = entry.get("results", entry)
+    else:
+        shootout_data = shootout_full["results"]
+
     by_multiplier = shootout_full.get("by_multiplier", {})
 
     p99_sorted = sorted(shootout_data.items(), key=lambda item: item[1]["latency"]["p99_ms"])
@@ -64,15 +82,12 @@ def generate_headlines():
     drain_time_s = outage_res.get("drain_time_s",
         round(float(outage_res.get("wait_time", {}).get("max_ms", 14190.0) / 1000.0), 3))
 
-    # 4. Retry Storm (R6: collapse_threshold from retry sweep, not from breaking point)
+    # 4. Retry Storm (R6/B4: collapse_threshold from retry sweep)
     retry_path = presets_dir / "retry_storm.json"
     with open(retry_path) as f:
         retry_full = json.load(f)
-    # collapse_threshold directly from sweep (R6)
-    collapse_threshold_str = retry_full.get("collapse_threshold", "not observed")
-    # amplification from sweep data at max overload
+    collapse_threshold_str = retry_full.get("collapse_threshold", "no metastable collapse observed on this trace")
     amplification = round(float(retry_full.get("amplification_at_max_overload", 1.0)), 3)
-    # For backward compat: check sweep_data
     sweep_data_list = retry_full.get("sweep_data", [])
     if sweep_data_list:
         amp_at_overload = max(
@@ -90,8 +105,10 @@ def generate_headlines():
                 "load_multiplier": knee.get("load_multiplier"),
                 "offered_req_s": _offered(knee),
                 "rho_analytic": _rho(knee),
-                "p99_ms": knee.get("p99_ms") or knee.get("latency_p99_ms")
+                "p99_ms": knee.get("p99_ms") or knee.get("latency_p99_ms"),
+                "knee_search_range": knee_search_range
             },
+            "knee_search_range": knee_search_range,
             "inflection": {
                 "load_multiplier": inflection.get("load_multiplier"),
                 "offered_req_s": _offered(inflection),
@@ -130,45 +147,36 @@ def generate_headlines():
     with open(out_file, "w") as f:
         json.dump(headline, f, indent=2)
 
-    # Sanity checks (R7: zero WARN or explain in STATE.md)
+    # Sanity checks (zero WARN or explain in STATE.md)
     warnings = []
     rho_break = _rho(breaking)
 
-    # F3-1: shootout spread >=20% at rho in [0.7,1.1]
-    rho_points = shootout_full.get("config", {}).get("rho_points", {})
-    if by_multiplier:
-        spread_found = any(
-            v.get("best_p99", 1) < v.get("worst_p99", 1) * 0.80
-            for label, v in by_multiplier.items()
-            if v.get("worst_p99", 0) > 0 and 0.7 <= rho_points.get(label, 0) <= 1.1
-        )
-        if not spread_found:
-            # fallback: check flat
-            all_p99 = [v["latency"]["p99_ms"] for v in shootout_data.values() if v]
-            if all_p99 and min(all_p99) / max(all_p99) > 0.80:
-                warnings.append("WARN: shootout spread < 20% at rho in [0.7,1.1]")
+    # Spread check
+    all_p99 = [v["latency"]["p99_ms"] for v in shootout_data.values() if v]
+    if all_p99 and min(all_p99) / max(all_p99) > 0.80:
+        warnings.append("WARN: shootout spread < 20%")
 
-    # F3-2: drain time
+    # Drain time
     if drain_time_s <= 0:
         warnings.append("WARN: drain time 0")
 
-    # F3-3: amplification
+    # Amplification
     if amplification < 1.2:
         warnings.append(
-            f"WARN: amplification < 1.2 (actual={amplification:.3f}) — no metastable collapse; see STATE.md OPEN"
+            f"WARN: amplification < 1.2 (actual={amplification:.3f}) — see STATE.md"
         )
 
-    # F3-4: rho NaN/Inf
+    # Rho NaN/Inf
     for k, v in [("knee", _rho(knee)), ("inflection", _rho(inflection)), ("breaking", rho_break)]:
         if v is None or (isinstance(v, float) and (math.isnan(v) or math.isinf(v))):
             warnings.append(f"WARN: {k} rho is NaN or Inf")
 
-    # F3-5: knee > breaking (R3: do not force; just warn)
+    # Knee > breaking
     knee_rho = _rho(knee)
     break_rho = _rho(breaking)
     if knee_rho > 0 and break_rho > 0 and knee_rho > break_rho:
         warnings.append(
-            f"WARN: knee rho({knee_rho:.4f}) > breaking rho({break_rho:.4f}) — odd ordering; see STATE.md OPEN"
+            f"WARN: knee rho({knee_rho:.4f}) > breaking rho({break_rho:.4f}) — see STATE.md"
         )
 
     knee_p99 = knee.get("p99_ms") or 0

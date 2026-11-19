@@ -1,4 +1,4 @@
-# Knee Point Explanation — NetSim-RT
+# Knee Point & Burstiness Explanation — NetSim-RT
 
 > [!IMPORTANT]
 > All numbers below are freshly computed from the full EPA trace (N=47 742 requests,
@@ -18,107 +18,85 @@
 | ρ_breaking | 0.3847 | FCFS: lowest rho with p99 > 500 ms SLO |
 | ρ_breaking (SJF) | 0.4578 | SJF breaking — higher than FCFS (SJF delays collapse ✓) |
 
-## Pollaczek-Khinchine (P-K) Mean Wait Formula
+## Formal Knee Definition and Search Range
 
-For M/G/1 queue:
+**knee = max curvature of p99(rho) on rho<=rho_break, because beyond it p99 is clipped at the queue cap; knee<breaking holds by construction.**
 
+In NetSim-RT, the knee search is explicitly bounded to `knee_search_range = [rho_min, rho_break] = [0.0200, 0.3847]`:
+```python
+# engine/sweep.py
+mask_knee = x_arr_full <= _break_rho + 1e-9
+x_knee_sub = x_arr_full[mask_knee].tolist()
+y_knee_sub = y_arr_full[mask_knee].tolist()
+kl = KneeLocator(x_knee_sub, y_knee_sub, curve="convex", direction="increasing", S=1.0)
 ```
-E[W] = ρ · E[S] · (1 + cv²) / [2 · (1 − ρ)]
-```
+Because the search domain is restricted to $\rho \le \rho_{\text{break}}$, $\rho_{\text{knee}} < \rho_{\text{break}}$ holds by mathematical construction. Allowing the search to extend into the post-saturation region would detect artifactual curvature caused by the queue capacity cap (drop-tail threshold or client timeouts) rather than the physical onset of queueing delay.
 
-**At the knee** (ρ = 0.2717, FCFS):
-- P-K predicted mean wait = **5.335 ms**
-- Simulator measured p99 = **285.8 ms**
+## Why Inflection (Max-Slope Point) > Breaking
 
-**At the breaking point** (ρ = 0.3847, FCFS):
-- P-K predicted mean wait = **8.943 ms**
-- Simulator measured p99 = **958.6 ms**
+The inflection point represents the maximum slope (sign change of the second derivative of $p_{99}(\rho)$):
+- $\rho_{\text{inflection}} = 0.4578$
+- $\rho_{\text{breaking}} = 0.3847$
 
-> [!NOTE]
-> P-K gives mean wait; p99 is 50–100× higher due to heavy-tailed service times
-> (cv² = 2.93). A single long job (HTTP large file) stalls the queue while short
-> requests pile up. The tail is amplified, not the mean.
+**Inflection > breaking occurs because of queue-cap clipping.** Beyond the breaking point, tail latency accelerates violently before hitting the queue capacity ceiling:
+- $\rho = 0.3847$ (breaking): $p_{99} = 958.6\text{ ms}$
+- $\rho = 0.4578$ (inflection): $p_{99} = 6711.4\text{ ms}$
+- $\rho = 0.5450$: $p_{99} = 22463.0\text{ ms}$
+- $\rho = 0.6480$: $p_{99} = 30002.0\text{ ms}$ (clipped by client timeout / queue cap)
 
-## Why System Breaks at Only ~38% Utilization
+The transition exhibits a sigmoidal profile: steep growth between $\rho = 0.385$ and $\rho = 0.545$, followed by hard clipping at $30002\text{ ms}$ at $\rho \ge 0.648$. The point of maximum slope (inflection) naturally sits in the mid-escalation region ($\rho = 0.458$, $p_{99} = 6711\text{ ms}$), strictly to the right of breaking ($\rho = 0.385$, $p_{99} = 958.6\text{ ms}$).
 
-With **cv² = 2.93**, the numerator of P-K is **(1 + cv²) = 3.93×** larger than
-M/M/1. Even at ρ = 0.38, one heavy request (top 1% of service times) adds
-50–200 ms of wait for all queued short jobs — which collectively breaches p99 > 500 ms.
+## Arrival Burstiness: Peak-to-Mean Ratio (PMR)
 
-```
-E[S²] = E[S]² × (1 + cv²) = (7.28 ms)² × 3.93 = 208.2 μs²
-```
+On the full EPA trace ($N = 47742$, span $= 86382.0\text{ s}$, mean rate $= 0.552685\text{ req/s}$):
 
-## How SJF Shifts the Knee
+| Aggregation Window | Peak Rate | Mean Rate | Peak-to-Mean Ratio (PMR) |
+|-------------------|-----------|-----------|--------------------------|
+| **60 s bins** | 2.4000 req/s | 0.5526 req/s | **4.3433** |
+| **3600 s bins (1 hr)** | 1.3239 req/s | 0.5526 req/s | **2.3959** |
 
-SJF prioritises short jobs → drains queue faster → mean wait for the median
-request improves significantly. Measured results:
+### Effective Load During Bursts
+Even though the 24-hour mean utilization is modest, instantaneous utilization during peak 60-second bursts exceeds server capacity:
+- **At knee ($\rho_{\text{mean}} = 0.2717$):**
+  $$\rho_{\text{mean}} \times \text{PMR}_{60} = 0.2717 \times 4.3433 = \mathbf{1.1801} \quad (> 1.0\text{ overload})$$
+- **At breaking ($\rho_{\text{mean}} = 0.3847$):**
+  $$\rho_{\text{mean}} \times \text{PMR}_{60} = 0.3847 \times 4.3433 = \mathbf{1.6711} \quad (> 1.0\text{ severe overload})$$
 
-- **FCFS knee**: ρ = 0.272 (offered 37.3 req/s, mult 67.5×, p99 = 285.8 ms)
-- **SJF knee**: ρ = 0.323 (offered 44.4 req/s, mult 80.4×, p99 = 252.1 ms)
-- **FCFS breaking**: ρ = 0.385 (p99 = 958.6 ms)
-- **SJF breaking**: ρ = 0.458 (p99 = 1 067.3 ms)
+## Pollaczek-Khinchine (P-K) vs. Simulated Mean Wait
 
-SJF shifts **both** the knee and the breaking point to higher utilization,
-confirming the theoretical advantage of size-aware scheduling under heavy tails.
+For an $M/G/1$ queue with mean service time $E[S] = 7.279\text{ ms}$ and $c_v^2 = 2.9295$:
+$$E[W]_{\text{P-K}} = \frac{\rho \cdot E[S] \cdot (1 + c_v^2)}{2 \cdot (1 - \rho)}$$
 
-## How Jain's Fairness Index Is Computed
+Comparing P-K predicted mean wait against actual discrete-event simulation ($c=1$, FCFS, EPA full trace):
+
+| Metric | Knee ($\rho = 0.2717$) | Breaking ($\rho = 0.3847$) |
+|--------|------------------------|----------------------------|
+| P-K Predicted Mean Wait | **5.335 ms** | **8.943 ms** |
+| Simulated Mean Wait | **26.231 ms** | **112.254 ms** |
+| Simulated Mean Latency | **33.510 ms** | **119.533 ms** |
+| Ratio (Simulated / P-K) | **4.92×** | **12.55×** |
+| Simulated $p_{99}$ Latency | **285.8 ms** | **958.6 ms** |
+
+### Root Cause Analysis (Supported Strictly by the Data)
+1. **P-K Underprediction:** The P-K formula strictly assumes memoryless Poisson arrivals with stationary rate $\lambda$ and zero autocorrelation.
+2. **Arrival Clustering:** Real web traffic exhibits short-timescale clustering with $\text{PMR}_{60} = 4.3433$.
+3. **Transient Overload:** During 60-second surges, the arrival rate spikes to $2.40\text{ req/s}$, forcing the instantaneous utilization to $1.18$ at the knee and $1.67$ at breaking.
+4. **Persistent Backlog:** Whenever instantaneous $\rho > 1.0$, queues grow deterministically at rate $(\lambda_{\text{burst}} - \mu)$. Once built, these backlogs take hundreds of seconds to dissipate under heavy-tailed service times, driving simulated mean waiting times $4.92\times$ (knee) and $12.55\times$ (breaking) above the Poisson steady-state prediction.
+
+## How SJF Shifts the Knee and Delays Collapse
+
+SJF prioritises short jobs, preventing them from being trapped behind heavy-tail jobs during bursts:
+- **FCFS knee**: $\rho = 0.272$ ($p_{99} = 285.8\text{ ms}$) $\to$ **SJF knee**: $\rho = 0.323$ ($p_{99} = 252.1\text{ ms}$) ($\Delta\rho = +0.051$)
+- **FCFS breaking**: $\rho = 0.385$ ($p_{99} = 958.6\text{ ms}$) $\to$ **SJF breaking**: $\rho = 0.458$ ($p_{99} = 1067.3\text{ ms}$) ($\Delta\rho = +0.073$)
+
+## Jain's Fairness Index Calculation
 
 ```python
-# Engine code: engine/simulator.py lines 465–470
-slowdowns = [max(1.0, latency / max(0.0001, service_time))
-             for r in completed_requests]
-# Jain's formula applied to the slowdown vector:
+# engine/simulator.py lines 465–470
+slowdowns = [max(1.0, latency / max(0.0001, service_time)) for r in completed_requests]
 sum_s  = sum(slowdowns)
 sum_sq = sum(s**2 for s in slowdowns)
-n      = len(slowdowns)
-jain   = sum_s**2 / (n * sum_sq)   # ∈ (0, 1]
+jain   = sum_s**2 / (len(slowdowns) * sum_sq)
 ```
-
-**Vector**: per-request slowdown = latency / service_time (≥ 1.0).  
-**Jain's index** = (Σxᵢ)² / (n · Σxᵢ²), where xᵢ = slowdownᵢ.
-
-| Policy | Jain | Why |
-|--------|------|-----|
-| RR | 0.674 | Shares server in fixed quanta → all requests slow by roughly equal factor |
-| FCFS | ~0.5 | Service-time-blind; short jobs queued behind long ones get high slowdown |
-| SJF | ~0.4 | Favours short jobs → they get low slowdown; long jobs get very high slowdown → unfair |
-| SRTF | 0.057 | Preempts long jobs aggressively → extreme slowdown for large requests → worst fairness |
-
-> [!TIP]
-> High Jain ≠ good tail latency. RR is fairest by slowdown but has worse p99 than FCFS
-> at high load because time-slicing wastes context-switch overhead and prevents long-job
-> completion.
-
-## "Break at X% utilization" — Authoritative Answer
-
-> **FCFS on EPA trace (c=1) breaks at ρ = 0.385 (38.5% utilization).**  
-> This is caused by cv² = 2.93 (heavy-tailed service times), not low server capacity.  
-> The P-K numerator is 3.93× larger than M/M/1, making mean wait explode even at moderate load.  
-> SJF delays collapse to ρ = 0.458 (45.8%) by prioritising short jobs.
-
-## VIVA QA
-
-**Q: How is Jain's fairness index computed, and why does RR rank highest / SJF lowest?**
-
-A: Jain's index = (Σxᵢ)² / (n · Σxᵢ²) applied to the per-request *slowdown*
-vector (slowdown = latency / service_time, floored at 1.0).  
-RR allocates equal time quanta, so every request's slowdown is proportional to
-the number of requests it must share the server with — i.e., all requests are
-slowed by the same factor, giving a uniform slowdown distribution and high Jain.  
-SJF (and SRTF) systematically delay large requests in favour of small ones:
-small requests get slowdown ≈ 1, large requests get slowdown ≫ 1, creating high
-variance → low Jain index.
-
-**Q: What is ρ at the knee and breaking point, and why does the system collapse so early?**
-
-A: Knee at ρ = 0.272 (FCFS) / ρ = 0.323 (SJF). Breaking at ρ = 0.385 (FCFS) / ρ = 0.458 (SJF).  
-Root cause: cv² = 2.93 on EPA service times. P-K mean wait = ρ·E[S]·(1+cv²)/[2(1−ρ)].  
-With cv² = 2.93 the numerator is 3.93× that of M/M/1. At ρ = 0.38, P-K predicts
-8.9 ms mean wait, but the top-1% long jobs add 200–500 ms of real wait, pushing p99 ≫ 500 ms.
-
-**Q: Does SJF improve fairness?**
-
-A: No. SJF worsens Jain fairness (SJF Jain ≈ 0.4 vs FCFS ≈ 0.5) because it
-systematically disadvantages large requests. SJF improves *throughput stability*
-and shifts the breaking point right (ρ_break = 0.458 vs 0.385).
+- **Round Robin (RR)**: High fairness (~0.674) via equal processor sharing.
+- **SJF / SRTF**: Low fairness (~0.057–0.066) due to starving large requests.
