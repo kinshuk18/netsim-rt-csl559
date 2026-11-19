@@ -50,8 +50,14 @@ def generate_sweep_figure():
     with open(headline_path) as f:
         hl = json.load(f)
 
-    # Extract sweep data
-    pts = data.get("sweep", {}).get("points", [])
+    # Extract sweep data (structure: sweep.fcfs.points or sweep.points)
+    _sweep = data.get("sweep", {})
+    if "points" in _sweep:
+        pts = _sweep["points"]
+    elif "fcfs" in _sweep:
+        pts = _sweep["fcfs"].get("points", [])
+    else:
+        pts = []
     mults = [p["load_multiplier"] for p in pts]
     offered = [p.get("offered_load_req_per_s", 0) for p in pts]
     p50 = [p.get("latency_p50_ms", 0) for p in pts]
@@ -66,7 +72,9 @@ def generate_sweep_figure():
     l3 = ax2.plot(mults, tput, "^-.", color="#0275d8", label="Throughput (req/s)", zorder=2)
 
     ax1.set_xscale("log")
-    ax1.set_yscale("log")
+    # Only use log scale on y if all positive
+    if all(v > 0 for v in p99 + p50):
+        ax1.set_yscale("log")
     ax1.set_xlabel("Offered Load Multiplier (log scale)")
     ax1.set_ylabel("Latency (ms, log scale)")
     ax2.set_ylabel("Throughput (req/s)")
@@ -217,7 +225,7 @@ def generate_validation_figure():
     # Panel 1: Throughput
     ax1.plot(rhos, real_tput, "o-", color="#0275d8", label="Real System (sys1)")
     ax1.plot(rhos, sim_tput, "s--", color="#5cb85c", label="Simulator (DES)")
-    ax1.set_xlabel("Target Utilization ($\rho$)")
+    ax1.set_xlabel("Target Utilization (rho)")
     ax1.set_ylabel("Throughput (req/s)")
     ax1.set_title("Throughput vs. Load")
     ax1.grid(True)
@@ -226,9 +234,10 @@ def generate_validation_figure():
     # Panel 2: Tail Latency (log scale)
     ax2.plot(rhos, real_p99, "o-", color="#d9534f", label="Real System (sys1)")
     ax2.plot(rhos, sim_p99, "s--", color="#6f42c1", label="Simulator (DES)")
-    ax2.set_xlabel("Target Utilization ($\rho$)")
+    ax2.set_xlabel("Target Utilization (rho)")
     ax2.set_ylabel("p99 Latency (ms, log scale)")
-    ax2.set_yscale("log")
+    if all(v > 0 for v in real_p99 + sim_p99):
+        ax2.set_yscale("log")
     ax2.set_title("p99 Tail Latency vs. Load")
     ax2.grid(True)
     ax2.legend(loc="upper left")

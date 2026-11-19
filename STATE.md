@@ -12,3 +12,12 @@ OPEN: retry_storm amplification=1.07 < 1.5 at mult=310.0x — not fabricated.
 F1 complete: shootout 4-mult, outage injection Jul95, retry_storm sweep, SJF sweep added
 OPEN: retry_storm amplification=1.07 < 1.5 at mult=310x — not fabricated.
 F2 complete: KNEE_EXPLANATION.md + VIVA_QA.md with real computed numbers
+
+OPEN: SJF knee (530.5x) NOT right of FCFS knee (530.5x) — recorded honestly.
+S1: DONE — rate audit: EPA 4k-subset rate=0.1321 req/s, sweep range bug fixed (was 400x→1300x), KNEE_EXPLANATION.md updated
+S2: DONE — presets rerun with correct sweep range (rho 0.001→1.29), retry_amp=2.30x ✓
+S3: DONE — headline.py checks confirmed: drain=2.03s, amp=1.64x, rho_break=0.28 (in [0.05,1.3]) ✓
+S4: DONE — validation.json updated: mape_rho_lte_0_9=69.56%, floor=6.47ms, LIMITATIONS.md+VIVA_QA.md appended
+S5: DONE — smoke_ui 6/6 PASS, 18 pytest pass
+S6: DONE — report assets generated (4 PDFs), main.tex authors/abstract/AI-decl filled, refs.bib written (9 refs), report_overleaf.zip created; latexmk stalled (acmart download), use Overleaf
+S7: DONE — only /etc/passwd in security test (intentional), no real secrets in git

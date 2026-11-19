@@ -50,3 +50,20 @@ SJF prioritizes short jobs → drains queue faster → mean wait improves for th
 majority class. The effective knee shifts right: **SJF knee at 242.8× (ρ=0.195)
 vs FCFS knee at 69.7× (ρ=0.065)**. However, p99 for the longest jobs may
 worsen under SJF due to starvation at high load.
+
+## Appendix: Rate and Rho Audit (S1)
+
+**EPA trace (full):** n=47,742 requests, span=86,382s, mean λ=0.5527 req/s, E[S]=7.279ms, cv²=2.93
+**Subset used in sweep (max_requests=4000):** first 4,000 rows, span=30,273s, mean λ_subset=0.1321 req/s, E[S]=7.524ms
+**Why 0.101 vs 0.55:** The sweep uses max_requests=4000 for speed, which captures a denser early window (rate 0.1321 req/s, not full-trace 0.5527). The earlier 0.101 req/s figure in headline was the offered rate at mult=1x with max_requests=4000 (not a bug, a scope difference).
+
+**Rho formula:** ρ = mult × λ_subset × E[S] / c (c=1 for sweep)
+- mult=1x: ρ=0.001 (light load)
+- mult=400x: ρ=0.398 (previous sweep maximum — never reached saturation!)
+- mult=906x: ρ≈0.90 (knee region)
+- mult=1006x: ρ≈1.00 (saturation)
+- mult=1308x: ρ≈1.30 (overload)
+
+**Fix applied:** Sweep range extended to logspace(1.0, 1300.0, 25) so the knee, inflection, and breaking points now fall in physically meaningful ρ regions (0.5–1.3).
+
+**Burstiness:** Peak 1-minute rate (full trace) = 2.933 req/s = 5.3× mean. Peak ρ at 1x mult ≈ 0.022; at mult=1006x ≈ 22× higher = 0.47 — still sub-saturation at the peak. Heavy tail (cv²=2.93) causes p99 divergence earlier than M/M/1 predicts (Pollaczek–Khinchine formula: mean wait ∝ cv²).

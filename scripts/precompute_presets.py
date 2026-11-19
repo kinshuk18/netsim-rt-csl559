@@ -163,7 +163,7 @@ def precompute():
 
     # PRESET 4: Load Sweep to Breaking Point — FCFS + SJF (F1d)
     print("Generating load sweep preset (FCFS + SJF)...")
-    mults = np.logspace(np.log10(1.0), np.log10(400.0), 25).tolist()
+    mults = np.logspace(np.log10(1.0), np.log10(1300.0), 25).tolist()
     fcfs_sweep = run_sweep(
         trace_path="data/processed/epa.parquet",
         policy="fcfs",
@@ -225,7 +225,7 @@ def precompute():
     timeout_s = 2.0 * base_p99
     print(f"  Baseline p99={base_p99*1000:.1f}ms → timeout={timeout_s*1000:.1f}ms")
 
-    retry_mults = np.linspace(180, 310, 10).tolist()
+    retry_mults = np.linspace(800, 1200, 10).tolist()
     sweep_data = []
     for mult in retry_mults:
         # Without retries
@@ -300,10 +300,10 @@ def precompute():
     print("Generating full policy shootout preset (multi-multiplier)...")
     # EPA base rate=0.5527 req/s
     shootout_multipliers = {
-        "knee": 69.7,
-        "inflection": 114.8,
-        "breaking": 311.6,
-        "350x": 350.0
+        "knee": 800.0,
+        "inflection": 950.0,
+        "breaking": 1050.0,
+        "1200x": 1200.0
     }
     all_policies = ["fcfs", "sjf", "srtf", "rr", "static_priority", "mlfq"]
     by_multiplier = {}
@@ -351,13 +351,13 @@ def precompute():
         raise RuntimeError("policy_shootout: spread < 20%")
 
     # Flat "results" for backward compat — use 350x
-    flat_results = by_multiplier["350x"]["results"]
-    flat_ranked = by_multiplier["350x"]["ranking"]
+    flat_results = by_multiplier["1200x"]["results"]
+    flat_ranked = by_multiplier["1200x"]["ranking"]
 
     p_shootout = {
         "id": "policy_shootout",
         "title": "Comprehensive Policy Shootout",
-        "description": "EPA trace, c=2. 6 policies at 4 load points: knee=69.7x, inflection=114.8x, breaking=311.6x, 350x. Checks >=20% p99 spread.",
+        "description": "EPA trace, c=2. 6 policies at 4 load points: knee=800x, inflection=950x, breaking=1050x, 1200x. Checks >=20% p99 spread.",
         "config": {
             "trace_name": "epa",
             "num_servers": 2,

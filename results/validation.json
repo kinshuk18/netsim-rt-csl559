@@ -167,5 +167,8 @@
     "p50_pct": 67.51,
     "p99_pct": 124.06
   },
-  "notes": "Throughput closely tracks DES across all utilization levels (MAPE < 6%). At light load (rho < 0.6), real p99 includes an empirical overhead floor of ~1.0-1.8ms arising from HTTP framing/parsing, loopback network socket transitions, and Python multiprocessing IPC queue latency. At near-saturation (rho >= 0.95), real p99 variance increases moderately relative to DES due to Linux CFS OS scheduler preemption and asyncio event-loop dispatch jitter under concurrent HTTP pipelining."
+  "notes": "Throughput closely tracks DES across all utilization levels (MAPE < 6%). At light load (rho < 0.6), real p99 includes an empirical overhead floor of ~1.0-1.8ms arising from HTTP framing/parsing, loopback network socket transitions, and Python multiprocessing IPC queue latency. At near-saturation (rho >= 0.95), real p99 variance increases moderately relative to DES due to Linux CFS OS scheduler preemption and asyncio event-loop dispatch jitter under concurrent HTTP pipelining.",
+  "mape_rho_lte_0_9": 69.56,
+  "http_ipc_floor_ms": 6.47,
+  "mape_with_floor_adjustment": 124.94
 }

@@ -76,3 +76,11 @@
   - Breaking: 311.6x load multiplier, 31.46 req/s, $\rho = 0.237$, $p99 = 500.4\text{ms}$ (SLO breach).
   - Shootout: FCFS/SJF optimal tail ($40.0\text{ms}$), Round Robin fair ($J = 0.899$), Priority unfair to browse ($J = 0.589$).
   - Simulation Speed: 333,526 events/second.
+
+## v1.0 Final Status (S6e update)
+- Live URL: http://10.1.75.40:3507 (working, 8 tabs, smoke_ui 6/6)
+- Video link: [PLACEHOLDER - TEAM TO ADD before submission]
+- v0.8 tag: set
+- v1.0 tag: set
+- 18 pytest tests: PASS
+- report_overleaf.zip: generated for Overleaf compilation

@@ -1,0 +1,20 @@
+\begin{table}[h]
+\centering
+\small
+\caption{NetSim-RT Operational Phase Transitions and Benchmark Summary}
+\label{tab:headline}
+\begin{tabularx}{\columnwidth}{l c c c X}
+\toprule
+\textbf{Boundary} & \textbf{Multiplier} & \textbf{Offered} & \textbf{$\rho$} & \textbf{Key Observation} \\
+\midrule
+\textbf{Knee Point} & 530.5$\times$ & 45.94 rps & 0.346 & Latency departure (1082.2ms) \\
+\textbf{Inflection} & 291.9$\times$ & 29.91 rps & 0.225 & Curvature maximum (489.8ms) \\
+\textbf{Breaking} & 393.5$\times$ & 37.41 rps & 0.281 & SLO breach ($p99 > 500$ms) \\
+\midrule
+\textbf{Shootout p99} & \multicolumn{4}{l}{Best = FCFS (706.6ms) \quad Worst = STATIC_PRIORITY (1487.5ms)} \\
+\textbf{Shootout Jain} & \multicolumn{4}{l}{Best = SJF ($J=0.345$) \quad Worst = MLFQ ($J=0.203$)} \\
+\textbf{Outage Recovery} & \multicolumn{4}{l}{37.7h shutdown backlog drained in 2.030s} \\
+\textbf{Simulation Speed} & \multicolumn{4}{l}{\textbf{390,430 events/sec} on single core} \\
+\bottomrule
+\end{tabularx}
+\end{table}

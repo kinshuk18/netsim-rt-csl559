@@ -1,0 +1,19 @@
+\begin{table}[h]
+\centering
+\small
+\caption{NetSim-RT REST API Endpoint Specifications}
+\label{tab:endpoints}
+\begin{tabularx}{\columnwidth}{l l X}
+\toprule
+\textbf{Endpoint} & \textbf{Method} & \textbf{Function \& Return Schema} \\
+\midrule
+\texttt{/api/health} & \texttt{GET} & System status, uptime, and active policy registry. \\
+\texttt{/api/traces} & \texttt{GET} & Metadata, event counts, and diurnal patterns of traces. \\
+\texttt{/api/presets} & \texttt{GET} & List of 6 precomputed demonstration scenario configs. \\
+\texttt{/api/simulate} & \texttt{POST} & Execute discrete-event simulation run with custom config. \\
+\texttt{/api/sweep} & \texttt{POST} & 25-point logarithmic load sweep detecting phase boundaries. \\
+\texttt{/api/custom} & \texttt{POST} & Execute AST-sandboxed user Python policy script. \\
+\texttt{/api/validation} & \texttt{GET} & Empirical emulation vs. DES benchmark metrics. \\
+\bottomrule
+\end{tabularx}
+\end{table}

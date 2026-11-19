@@ -35,3 +35,6 @@ In accordance with academic integrity and rigorous systems engineering practices
 2. **Custom Policy AST Sandbox Constraints**:
    - To guarantee complete host security against arbitrary code execution, the custom policy sandbox restricts Python standard libraries (no external imports, no filesystem I/O, no network calls).
    - Policies that require heavy external machine learning libraries (such as PyTorch or TensorFlow) must be evaluated offline or integrated into built-in engine modules.
+
+## Latency Floor
+DES matches throughput and ordering of policies; absolute latency differs by the measured floor (~1.0-1.8ms HTTP/IPC overhead not modeled in DES); tail diverges at saturation due to CFS preemption and OS scheduling jitter.

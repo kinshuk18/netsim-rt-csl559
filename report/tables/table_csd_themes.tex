@@ -1,0 +1,31 @@
+\begin{table*}[t]
+\centering
+\small
+\caption{Realized Computer Systems Design (CSD) Principles in NetSim-RT}
+\label{tab:csd_themes}
+\begin{tabularx}{\textwidth}{l p{4.2cm} X}
+\toprule
+\textbf{CSD Principle} & \textbf{Concrete Implementation} & \textbf{Architectural Rationale \& Engineering Trade-off} \\
+\midrule
+\textbf{API Design} & FastAPI REST API with typed Pydantic models & Declarative schemas guarantee strict input validation and auto-generate OpenAPI documentation. \\
+\addlinespace[2pt]
+\textbf{Load Balancing} & Central FIFO queue and multi-server dispatch & Eliminates worker head-of-line blocking while enabling modular policy plug-ins. \\
+\addlinespace[2pt]
+\textbf{Analytical Caching} & In-process DuckDB columnar store & Sub-millisecond query evaluation of historical runs via SHA256 parameter fingerprinting. \\
+\addlinespace[2pt]
+\textbf{Concurrency} & Asynchronous I/O + Multiprocessing & Asynchronous FastAPI loop manages client connections; multi-process pools execute CPU-bound sweeps. \\
+\addlinespace[2pt]
+\textbf{Containerless Deploy} & Native Linux execution with CPU pinning & Minimal hypervisor overhead; \texttt{os.sched\_setaffinity} eliminates kernel scheduler core thrashing. \\
+\addlinespace[2pt]
+\textbf{Design Patterns} & Decorator-based Strategy Registry & Allows runtime policy resolution (\texttt{@register\_policy}) without modifying simulator core logic. \\
+\addlinespace[2pt]
+\textbf{Sandbox Security} & AST whitelist validation runtime & Prevents arbitrary code execution, filesystem traversal, and OS process spawning in custom scripts. \\
+\addlinespace[2pt]
+\textbf{Error Handling} & Finite drop-tail buffers \& timeouts & Enforces graceful backpressure (HTTP 503/504) to prevent memory exhaustion under retry storms. \\
+\addlinespace[2pt]
+\textbf{Algorithms} & Heap-based Discrete-Event Simulation & $O(\log N)$ priority queue scheduling achieving over 333,000 events/second in pure Python. \\
+\addlinespace[2pt]
+\textbf{Testing \& CI} & Pytest queueing checks \& GitHub CI & Mathematical closed-form verification ($M/M/1$, $M/M/c$) combined with automated regression testing. \\
+\bottomrule
+\end{tabularx}
+\end{table*}
