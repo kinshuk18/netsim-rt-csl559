@@ -10,7 +10,10 @@
 <body>
   <header class="app-header">
     <div class="header-left">
-      <div class="logo-pill">CSL559</div>
+      <div class="logo-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+        CSL559
+      </div>
       <div>
         <h1>NetSim-RT</h1>
         <p class="subtitle">Trace-Driven Real-Traffic Simulator & Policy Benchmark &bull; IIT Bhilai</p>
@@ -23,12 +26,34 @@
   </header>
 
   <nav class="tab-nav">
-    <button class="tab-btn active" data-tab="presets-tab">⚡ Presets</button>
-    <button class="tab-btn" data-tab="simulator-tab">🔬 Simulator</button>
-    <button class="tab-btn" data-tab="sweep-tab">📈 Load Sweep & Knee</button>
-    <button class="tab-btn" data-tab="shootout-tab">🏆 Policy Shootout</button>
-    <button class="tab-btn" data-tab="custom-tab">💻 Custom Policy Sandbox</button>
-    <button class="tab-btn" data-tab="datasets-tab">📊 Real Traces Explorer</button>
+    <button class="tab-btn active" data-tab="presets-tab">
+      <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Presets
+    </button>
+    <button class="tab-btn" data-tab="simulator-tab">
+      <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg>
+      Simulator
+    </button>
+    <button class="tab-btn" data-tab="sweep-tab">
+      <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Load Sweep & Knee
+    </button>
+    <button class="tab-btn" data-tab="shootout-tab">
+      <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      Policy Shootout
+    </button>
+    <button class="tab-btn" data-tab="custom-tab">
+      <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Custom Policy Sandbox
+    </button>
+    <button class="tab-btn" data-tab="datasets-tab">
+      <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Real Traces Explorer
+    </button>
+    <button class="tab-btn" data-tab="architecture-tab">
+      <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+      Architecture
+    </button>
   </nav>
 
   <main class="main-container">
@@ -62,7 +87,7 @@
       <div class="grid-2-col">
         <div class="card form-card">
           <h3>Simulation Parameters</h3>
-          <form id="sim-form">
+          <form id="sim-form" novalidate onsubmit="event.preventDefault();">
             <div class="form-row">
               <div class="form-group">
                 <label>Dataset Trace</label>
@@ -372,10 +397,45 @@
         </div>
       </div>
     </section>
+    <!-- TAB 7: ARCHITECTURE & METHODOLOGY -->
+    <section id="architecture-tab" class="tab-content">
+      <div class="section-header">
+        <h2>System Architecture & Experimental Methodology</h2>
+        <p>End-to-end discrete-event queueing simulation pipeline and empirical trace-driven methodology.</p>
+      </div>
+
+      <div class="grid-2-col">
+        <div class="card">
+          <div class="card-header">
+            <h3>System Architecture</h3>
+            <span class="badge badge-primary">Design</span>
+          </div>
+          <div class="p-2 text-center">
+            <img src="images/architecture.png" alt="NetSim-RT Architecture Diagram" style="max-width:100%; height:auto; border-radius:6px; border:1px solid var(--border);">
+          </div>
+          <div class="chart-caption mt-2">
+            NetSim-RT ingests production HTTP traces into a discrete-event simulation engine with configurable admission control, load balancing, and scheduling policies. Simulations execute within a strict AST-sandboxed Python runtime, caching precomputed and ad-hoc runs in DuckDB for sub-second REST API queries on sys1.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Simulation Methodology</h3>
+            <span class="badge badge-primary">Pipeline</span>
+          </div>
+          <div class="p-2 text-center">
+            <img src="images/methodology.png" alt="NetSim-RT Methodology Diagram" style="max-width:100%; height:auto; border-radius:6px; border:1px solid var(--border);">
+          </div>
+          <div class="chart-caption mt-2">
+            Raw server logs are parsed into normalized UTC epoch events with payload-calibrated service times reflecting empirical HTTP transfer dynamics. Systematic 25-point logarithmic load sweeps detect knee capacity limits, curvature inflections, and queue breaking points across competing policies.
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="app-footer">
-    <p>NetSim-RT &bull; CSL559 Computer Systems Design &bull; Kinshuk Gupta (12240870), Maloth Madhu (12241020), Bhukya Raju (12240450) &bull; IIT Bhilai</p>
+    <p>NetSim-RT &bull; CSL559 Computer Systems Design &bull; Kinshuk Gupta (12341190), Maloth Madhu (12341370), Bhukya Raju (12340520) &bull; IIT Bhilai</p>
   </footer>
 
   <script src="app.js"></script>

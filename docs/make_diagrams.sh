@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -e
+
+# 1. Architecture DOT
+cat << 'DOT1' > docs/architecture.dot
+digraph Architecture {
+  graph [rankdir=LR, bgcolor="#0f172a", fontname="Inter,Helvetica,Arial", fontcolor="#f8fafc", nodesep=0.5, ranksep=0.7];
+  node [shape=box, style="filled,rounded", fontname="Inter,Helvetica,Arial", fontcolor="#f8fafc", color="#334155", penwidth=1.5];
+  edge [color="#64748b", fontname="Inter,Helvetica,Arial", fontcolor="#94a3b8", fontsize=10, arrowsize=0.8, penwidth=1.5];
+
+  subgraph cluster_storage {
+    label="Trace Storage";
+    color="#1e293b";
+    fontcolor="#38bdf8";
+    fillcolor="#1e293b";
+    style="filled,rounded";
+    parquet [label="Parquet Traces\n(NASA 1995 / WorldCup98)", fillcolor="#1e3a8a", color="#3b82f6"];
+    windowing [label="Windowing & Sampling\n(Offset, Multiplier)", fillcolor="#1e293b", color="#475569"];
+  }
+
+  subgraph cluster_engine {
+    label="DES Engine (sim/engine.py)";
+    color="#334155";
+    fontcolor="#38bdf8";
+    fillcolor="#1e293b";
+    style="filled,rounded";
+    
+    arrival [label="Arrival Event", fillcolor="#334155"];
+    admission [label="Admission Control\n(Drop-Tail / Token-Bucket)", fillcolor="#4338ca", color="#6366f1"];
+    lb [label="Load Balancer\n(Central / RR / JSQ / SQ2)", fillcolor="#065f46", color="#10b981"];
+    queue [label="Scheduler & Queue\n(FCFS, SJF, RR, Priority, PS)", fillcolor="#92400e", color="#f59e0b"];
+    servers [label="M Distributed Workers\n(Service Completion)", fillcolor="#374151", color="#6b7280"];
+    metrics [label="Online Metrics Accumulator\n(Latency, Dropped, Utilization)", fillcolor="#831843", color="#ec4899"];
+
+    arrival -> admission [label="req"];
+    admission -> lb [label="admitted"];
+    lb -> queue [label="dispatch"];
+    queue -> servers [label="schedule"];
+    servers -> metrics [label="complete"];
+  }
+
+  subgraph cluster_sandbox {
+    label="Security Sandbox";
+    color="#7f1d1d";
+    fontcolor="#f87171";
+    fillcolor="#450a0a";
+    style="filled,rounded";
+    sandbox [label="Custom Policy Sandbox\n(AST whitelist, setrlimit, timeout)", fillcolor="#7f1d1d", color="#ef4444"];
+  }
+
+  subgraph cluster_backend {
+    label="Application & Serving";
+    color="#1e293b";
+    fontcolor="#38bdf8";
+    fillcolor="#1e293b";
+    style="filled,rounded";
+    fastapi [label="FastAPI App\n(server/main.py)", fillcolor="#047857", color="#10b981"];
+    cache [label="Cache (DuckDB)\n(duckdb/presets)", fillcolor="#7c2d12", color="#ea580c"];
+  }
+
+  subgraph cluster_deployment {
+    label="Deployment (sys1)";
+    color="#1e293b";
+    fontcolor="#38bdf8";
+    fillcolor="#1e293b";
+    style="filled,rounded";
+    sys1 [label="sys1 Container (10.1.75.40)\nExt 3507 -> Int 3000", fillcolor="#1f2937", color="#3b82f6"];
+    ui [label="Vanilla-JS Frontend\n(ECharts, Dark UI)", fillcolor="#1d4ed8", color="#60a5fa"];
+  }
+
+  parquet -> windowing;
+  windowing -> arrival;
+  sandbox -> queue [label="custom logic", style=dashed, color="#f87171"];
+  metrics -> fastapi [label="SimulationResult"];
+  fastapi -> cache [label="read/write"];
+  fastapi -> ui [label="JSON REST API"];
+  sys1 -> fastapi [label="hosts", style=dotted];
+}
+DOT1
+
+# 2. Methodology DOT
+cat << 'DOT2' > docs/methodology.dot
+digraph Methodology {
+  graph [rankdir=TB, bgcolor="#0f172a", fontname="Inter,Helvetica,Arial", fontcolor="#f8fafc", nodesep=0.4, ranksep=0.6];
+  node [shape=box, style="filled,rounded", fontname="Inter,Helvetica,Arial", fontcolor="#f8fafc", color="#334155", penwidth=1.5];
+  edge [color="#64748b", fontname="Inter,Helvetica,Arial", fontcolor="#94a3b8", fontsize=10, arrowsize=0.8, penwidth=1.5];
+
+  raw [label="Raw Server Access Logs\n(NASA-HTTP Jul/Aug 1995, WorldCup98)", fillcolor="#1e3a8a", color="#3b82f6"];
+  parse [label="Format Parsing & Timestamp Normalization\n(Regex parsing -> UTC epoch seconds)", fillcolor="#1e293b", color="#475569"];
+  service [label="Calibrated Service Time Derivation\n(Payload bytes -> Transfer model + CPU base latency)", fillcolor="#4338ca", color="#6366f1"];
+  window [label="Workload Window Selection & Multiplier\n(Median hour, peak hour, outage, scaling λ * factor)", fillcolor="#065f46", color="#10b981"];
+  sim [label="Discrete-Event Queue Simulation\n(Trace-driven arrivals, deterministic/empirical service)", fillcolor="#92400e", color="#f59e0b"];
+  sweep [label="25-Point Logarithmic Load Sweep\n(Multipliers from 0.1x to 10.0x offered load)", fillcolor="#7c2d12", color="#ea580c"];
+  detect [label="Threshold & Phase Transition Detection\n(Knee: Satopaa Kneedle; Inflection: d2 sign change; Breaking: p99>10x or drop>1%)", fillcolor="#831843", color="#ec4899"];
+  validate [label="Experimental Validation\n(Engine verification vs M/M/m & sys1 real replay)", fillcolor="#047857", color="#10b981"];
+
+  raw -> parse -> service -> window -> sim -> sweep -> detect -> validate;
+}
+DOT2
+
+dot -Tpng -Gdpi=150 docs/architecture.dot -o docs/architecture.png
+dot -Tpng -Gdpi=150 docs/methodology.dot -o docs/methodology.png
+cp docs/architecture.png server/static/images/
+cp docs/methodology.png server/static/images/
+echo "Diagrams generated successfully."

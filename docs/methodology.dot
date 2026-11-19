@@ -1,0 +1,16 @@
+digraph Methodology {
+  graph [rankdir=TB, bgcolor="#0f172a", fontname="Inter,Helvetica,Arial", fontcolor="#f8fafc", nodesep=0.4, ranksep=0.6];
+  node [shape=box, style="filled,rounded", fontname="Inter,Helvetica,Arial", fontcolor="#f8fafc", color="#334155", penwidth=1.5];
+  edge [color="#64748b", fontname="Inter,Helvetica,Arial", fontcolor="#94a3b8", fontsize=10, arrowsize=0.8, penwidth=1.5];
+
+  raw [label="Raw Server Access Logs\n(NASA-HTTP Jul/Aug 1995, WorldCup98)", fillcolor="#1e3a8a", color="#3b82f6"];
+  parse [label="Format Parsing & Timestamp Normalization\n(Regex parsing -> UTC epoch seconds)", fillcolor="#1e293b", color="#475569"];
+  service [label="Calibrated Service Time Derivation\n(Payload bytes -> Transfer model + CPU base latency)", fillcolor="#4338ca", color="#6366f1"];
+  window [label="Workload Window Selection & Multiplier\n(Median hour, peak hour, outage, scaling λ * factor)", fillcolor="#065f46", color="#10b981"];
+  sim [label="Discrete-Event Queue Simulation\n(Trace-driven arrivals, deterministic/empirical service)", fillcolor="#92400e", color="#f59e0b"];
+  sweep [label="25-Point Logarithmic Load Sweep\n(Multipliers from 0.1x to 10.0x offered load)", fillcolor="#7c2d12", color="#ea580c"];
+  detect [label="Threshold & Phase Transition Detection\n(Knee: Satopaa Kneedle; Inflection: d2 sign change; Breaking: p99>10x or drop>1%)", fillcolor="#831843", color="#ec4899"];
+  validate [label="Experimental Validation\n(Engine verification vs M/M/m & sys1 real replay)", fillcolor="#047857", color="#10b981"];
+
+  raw -> parse -> service -> window -> sim -> sweep -> detect -> validate;
+}

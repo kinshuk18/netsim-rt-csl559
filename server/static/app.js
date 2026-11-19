@@ -11,7 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTraces();
   initCustomTemplates();
 
-  document.getElementById("sim-form").addEventListener("submit", handleSimulatorSubmit);
+  const simBtn = document.getElementById("btn-run-sim");
+  if (simBtn) simBtn.addEventListener("click", handleSimulatorSubmit);
+  const simForm = document.getElementById("sim-form");
+  if (simForm) simForm.addEventListener("submit", handleSimulatorSubmit);
   document.getElementById("sweep-form").addEventListener("submit", handleSweepSubmit);
   document.getElementById("shootout-form").addEventListener("submit", handleShootoutSubmit);
   document.getElementById("btn-run-custom").addEventListener("click", handleCustomPolicySubmit);
@@ -65,12 +68,12 @@ async function loadPresets() {
       const card = document.createElement("div");
       card.className = "preset-card";
       card.innerHTML = `
-        <div>
+        <div class="preset-card-content">
           <span class="badge badge-primary mb-2">${p.config ? p.config.trace_name : 'Scenario'}</span>
           <h3>${p.title}</h3>
           <p>${p.description}</p>
         </div>
-        <button class="btn btn-outline w-100" onclick="viewPreset('${p.id}')">Inspect Scenario</button>
+        <button class="btn-inspect" onclick="viewPreset('${p.id}')">Inspect Scenario</button>
       `;
       container.appendChild(card);
     });

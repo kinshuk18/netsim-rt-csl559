@@ -1,9 +1,12 @@
-# NetSim-RT State (v0.5)
-- Done: Engine completion with load balancing (Central, RR, JSQ, SQ2), admission (None, Drop-tail, Token-bucket), retries with backoff; 25-point log load sweep with KneeLocator, Inflection (d2 sign change), and Breaking point; 6 programmatic presets precomputed; custom policy AST sandbox + setrlimit + FCFS fallback; no-build vanilla dark frontend with vendored ECharts; sys1 deployment on port 3507 with scripts/deploy.sh; 14 pytest unit tests passing.
-- Next: Stage 2 - Emulation testbed (S2.1), README.md (S2.2), docs (S2.3), Report LaTeX & assets (S2.4), CI workflow (S2.5).
-- How to run:
-  - Local tests: `.venv/bin/pytest tests/ -q`
-  - Local server: `.venv/bin/uvicorn server.main:app --port 3507`
-  - Demo (local fish): `ssh -N -f -L 3507:localhost:3507 -p 2507 student@10.1.75.40; and xdg-open http://localhost:3507`
-  - Sys1 restart (remote): `bash scripts/restart_demo.sh`
-- Known gaps: Stage 2 report generation, real emulation benchmark, and documentation assets.
+# NetSim-RT State (v0.6 Demo-Ready)
+- Status: Stage A complete. All 6 smoke checks passing; UI bug fixes applied (3+3 grid, vector icons, aligned inspect buttons, consistent title height); architecture & methodology diagrams generated; headline numbers extracted (333k ev/s).
+- sys1 Reachability: External 3507 maps to internal container 3000. Uvicorn bound to 3000; directly reachable at http://10.1.75.40:3507.
+- Headline Results: Knee at 69.7x (8.61 req/s, rho=0.065, p99=81.8ms); Inflection at 114.8x (13.62 req/s, rho=0.102); Breaking at 311.6x (31.46 req/s, rho=0.237, p99=500.4ms SLO breach); Shootout best p99=FCFS (40.0ms), best fairness=RR (J=0.899).
+- Run it:
+  - Local Demo: `bash scripts/demo_local.sh` -> opens http://127.0.0.1:3507
+  - Local Tests: `.venv/bin/pytest tests/ -q` (14 passing)
+  - Local Smoke UI: `.venv/bin/python scripts/smoke_ui.py` (6/6 PASS)
+  - Sys1 Live Web: `http://10.1.75.40:3507` (campus network)
+  - Sys1 Tunnel Fallback (fish): `ssh -N -f -L 3607:localhost:3000 -p 2507 student@10.1.75.40; and xdg-open http://localhost:3607`
+  - Sys1 Redeploy: `bash scripts/deploy.sh`
+- Next: Stage B (post-demo) - Emulation testbed on sys1, report/main.tex compilation, and GitHub CI workflow.

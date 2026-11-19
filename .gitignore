@@ -35,6 +35,8 @@ data/cache/
 # Results and temp files
 results/tmp/
 *.duckdb
+*.duckdb.wal
+*.wal
 *.db
 *.sqlite
 

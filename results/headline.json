@@ -1,0 +1,52 @@
+{
+  "phase_transitions": {
+    "knee": {
+      "load_multiplier": 69.6828,
+      "offered_req_s": 8.61,
+      "rho": 0.0648,
+      "p99_ms": 81.75
+    },
+    "inflection": {
+      "load_multiplier": 114.8059,
+      "offered_req_s": 13.62,
+      "rho": 0.1025,
+      "p99_ms": 199.11
+    },
+    "breaking": {
+      "load_multiplier": 311.6311,
+      "offered_req_s": 31.46,
+      "rho": 0.2367,
+      "p99_ms": 500.41,
+      "reason": "p99 > SLO"
+    }
+  },
+  "shootout": {
+    "best_p99": {
+      "policy": "fcfs",
+      "p99_ms": 40.0
+    },
+    "worst_p99": {
+      "policy": "mlfq",
+      "p99_ms": 40.04
+    },
+    "best_fairness": {
+      "policy": "rr",
+      "jain_index": 0.8986
+    },
+    "worst_fairness": {
+      "policy": "static_priority",
+      "jain_index": 0.5889
+    }
+  },
+  "outage_recovery": {
+    "event": "Hurricane Erin August 1995 (37.7h shutdown)",
+    "backlog_drain_time_s": 0.0
+  },
+  "retry_storm": {
+    "traffic_amplification_ratio": 1.0,
+    "collapse_threshold": "load > 311.6311x (goodput = 1.1 req/s)"
+  },
+  "simulation_throughput": {
+    "events_per_second": 333526
+  }
+}
