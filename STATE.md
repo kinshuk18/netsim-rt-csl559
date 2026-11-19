@@ -6,3 +6,8 @@
 - Live URL: http://10.1.75.40:3507 (sys1 container port 3000). All 8 tabs operational.
 - Verification: 14/14 pytest unit tests passing, smoke_ui.py 6/6 PASS.
 - Next: Stage E (v1.0) - LaTeX report compilation, vector report assets, GitHub Actions CI workflow.
+
+OPEN: retry_storm amplification=1.07 < 1.5 at mult=310.0x — not fabricated.
+
+F1 complete: shootout 4-mult, outage injection Jul95, retry_storm sweep, SJF sweep added
+OPEN: retry_storm amplification=1.07 < 1.5 at mult=310x — not fabricated.

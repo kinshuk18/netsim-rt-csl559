@@ -71,6 +71,10 @@ class SimulationConfig:
     max_requests: Optional[int] = None
     window_start_s: Optional[float] = None
     window_duration_s: Optional[float] = None
+    # Server downtime injection: during [server_downtime_start_s, server_downtime_end_s]
+    # servers do not start new work (arrivals queue up). Times are in sim-time (seconds).
+    server_downtime_start_s: Optional[float] = None
+    server_downtime_end_s: Optional[float] = None
 
 
 @dataclass

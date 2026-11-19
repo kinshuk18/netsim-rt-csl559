@@ -26,6 +26,7 @@ EVENT_ARRIVAL = 1
 EVENT_COMPLETION = 2
 EVENT_QUANTUM_EXPIRE = 3
 EVENT_TIMEOUT = 4
+EVENT_RECOVERY = 5  # Server downtime ends; drain backlog
 
 
 class Simulator:
@@ -76,6 +77,15 @@ class Simulator:
         self.timeline_samples: List[Dict[str, float]] = []
         self.last_sample_time = 0.0
         self.sample_interval = 1.0  # Will be adjusted after loading trace
+
+        # Server downtime injection
+        self._downtime_start = config.server_downtime_start_s
+        self._downtime_end = config.server_downtime_end_s
+        self._downtime_active = False  # True while servers are in downtime
+        # Track peak backlog and drain metrics
+        self.peak_backlog = 0
+        self.recovery_start_time: Optional[float] = None
+        self.drain_end_time: Optional[float] = None
 
     def _current_queue_length(self) -> int:
         if self.is_central:
@@ -172,6 +182,10 @@ class Simulator:
         if total_arrivals == 0:
             raise ValueError(f"Trace {self.config.trace_path} produced 0 requests.")
 
+        # Schedule recovery event if downtime is configured
+        if self._downtime_start is not None and self._downtime_end is not None:
+            self._push_event(self._downtime_end, EVENT_RECOVERY, None)
+
         processed_events = 0
 
         while self.event_heap:
@@ -188,11 +202,27 @@ class Simulator:
                 self._handle_quantum_expire(payload)
             elif ev_type == EVENT_TIMEOUT:
                 self._handle_timeout(payload)
+            elif ev_type == EVENT_RECOVERY:
+                self._handle_recovery()
 
             self._record_timeline_sample()
 
         real_elapsed = time.perf_counter() - real_start_clock
         return self._compute_results(real_elapsed, processed_events)
+
+    def _handle_recovery(self):
+        """Servers come back online after downtime; drain backlog."""
+        self._downtime_active = False
+        self.recovery_start_time = self.now
+        # Dispatch work to all idle servers
+        while self.idle_servers:
+            next_req = self.policy.select_next(self.now)
+            while next_req and (next_req.dropped or next_req.timed_out):
+                next_req = self.policy.select_next(self.now)
+            if next_req is None:
+                break
+            server_id = self.idle_servers.pop(0)
+            self._dispatch_to_server(next_req, server_id)
 
     def _handle_arrival(self, req: Request):
         # Admission control
@@ -223,7 +253,30 @@ class Simulator:
 
         if self.is_central:
             # Central queue multi-server dispatch
-            if self.idle_servers:
+            # Check server downtime: if in downtime window, force-enqueue (don't dispatch)
+            in_downtime = (
+                self._downtime_start is not None
+                and self._downtime_end is not None
+                and self._downtime_start <= self.now < self._downtime_end
+            )
+            if in_downtime:
+                self._downtime_active = True
+                self.policy.add_request(req, self.now)
+                # Track peak backlog
+                ql = self._current_queue_length()
+                if ql > self.peak_backlog:
+                    self.peak_backlog = ql
+            elif self._downtime_active and self._downtime_end is not None and self.now >= self._downtime_end:
+                # Recovery just started: resume normal dispatch
+                self._downtime_active = False
+                if self.recovery_start_time is None:
+                    self.recovery_start_time = self.now
+                if self.idle_servers:
+                    server_id = self.idle_servers.pop(0)
+                    self._dispatch_to_server(req, server_id)
+                else:
+                    self.policy.add_request(req, self.now)
+            elif self.idle_servers:
                 server_id = self.idle_servers.pop(0)
                 self._dispatch_to_server(req, server_id)
             else:
@@ -305,6 +358,21 @@ class Simulator:
 
         req.finish_time = self.now
         del self.active_requests[server_id]
+
+        # During downtime: server goes idle, don't start new work
+        in_downtime = (
+            self._downtime_start is not None
+            and self._downtime_end is not None
+            and self._downtime_start <= self.now < self._downtime_end
+        )
+        if in_downtime:
+            self.idle_servers.append(server_id)
+            return
+
+        # Track drain end: if recovery started and queue now empty, record drain time
+        if self.recovery_start_time is not None and self.drain_end_time is None:
+            if self._current_queue_length() == 0 and self.policy.queue_length() == 0:
+                self.drain_end_time = self.now
 
         # Allocate server to next waiting request from policy
         policy_obj = self.policy if self.is_central else self.server_queues[server_id]
