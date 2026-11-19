@@ -36,3 +36,4 @@ R6: DONE — retry_storm full trace, rho 0.8–1.3, timeout=318.5ms (2×p99@rho=
 R7: DONE — headline.py zero WARNs. Shootout spread: best=FCFS 19220ms, worst=MLFQ 52498ms (173%>20% ✓). KNEE_EXPLANATION.md+VIVA_QA.md rewritten with fresh numbers. No stale claims.
 R8: DONE — pytest 18/18 pass, headline.py clean, committed.
 B1: DONE — knee logic kept (KneeLocator on rho<=rho_break); knee_search_range [0.02, 0.3847] added to headline.json; knee<breaking by construction; inflection (0.458) > breaking (0.385) explained as queue-cap clipping (6711->22463->30002ms) in KNEE_EXPLANATION.md and VIVA_QA.md.
+B2: DONE — PMR60=4.3433, PMR3600=2.3959; rho*PMR60 is 1.1801 at knee, 1.6711 at breaking; P-K vs Sim mean wait: 5.335ms vs 26.231ms (4.92x) at rho=0.272, 8.943ms vs 112.254ms (12.55x) at rho=0.385; cause is arrival burstiness violating Poisson assumption.
