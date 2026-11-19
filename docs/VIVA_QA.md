@@ -56,3 +56,6 @@ A: Throughput MAPE=41.29%, p50 MAPE=67.51%, p99 MAPE=124.06%. DES accurately tra
 
 **Q: Why is p99 MAPE 124%?**
 A: At saturation (ρ≥0.95), Linux CFS scheduler preempts server threads causing tail latency 2–5× higher than DES. At light load (ρ<0.5), HTTP/IPC floor of ~1–2 ms dominates small service times. DES correctly ranks policies and predicts throughput; absolute tail latency requires OS-aware modelling. See LIMITATIONS.md.
+
+**Q: Why is shootout p99 not comparable across policies?**
+A: Timeouts apply only until service starts; RR/MLFQ start every request within one quantum so none time out and the worst finish at ~187 s; FCFS/SJF drop 715/765 unserved requests (1.5%/1.6%) and exclude them from p99.

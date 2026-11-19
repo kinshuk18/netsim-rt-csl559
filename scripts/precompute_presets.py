@@ -381,10 +381,11 @@ def precompute():
     print("  retry storm done")
 
     # -----------------------------------------------------------------------
-    # PRESET 6: Policy Shootout (B3: full trace, c=1, rho 0.4 and 0.6, overload 1.1)
     # -----------------------------------------------------------------------
-    print("Generating full policy shootout preset (B3: c=1, rho 0.4, 0.6, 1.1)...")
-    shootout_rhos = {"0.4": 0.4, "0.6": 0.6, "1.1": 1.1}
+    # PRESET 6: Policy Shootout (D1/D2: full trace, c=1, rho 0.3, 0.4, 0.6, 1.1)
+    # -----------------------------------------------------------------------
+    print("Generating full policy shootout preset (D1/D2: rho 0.3, 0.4, 0.6, 1.1)...")
+    shootout_rhos = {"0.3": 0.3, "0.4": 0.4, "0.6": 0.6, "1.1": 1.1}
     shootout_multipliers = {
         label: rho * 1 / (lam * es)  # c=1 for shootout
         for label, rho in shootout_rhos.items()
@@ -406,14 +407,51 @@ def precompute():
                     queue_capacity=5000,
                     max_requests=None  # R1
                 )
-                res = Simulator(cfg).run()
-                mult_results[pol] = res.to_dict()
+                sim = Simulator(cfg)
+                res = sim.run()
+                pol_dict = res.to_dict()
+
+                # D1 metrics
+                n_total = len(sim.all_requests)
+                timed_out_cnt = sum(1 for r in sim.all_requests if r.timed_out)
+                timeout_pct = (timed_out_cnt / n_total) * 100.0 if n_total > 0 else 0.0
+
+                slo_ok_cnt = sum(
+                    1 for r in sim.all_requests
+                    if r.finish_time >= 0.0 and not r.timed_out and r.latency <= 0.500
+                )
+                slo_ok_pct = (slo_ok_cnt / n_total) * 100.0 if n_total > 0 else 0.0
+
+                eff_latencies_ms = []
+                timeout_ms = cfg.client_timeout * 1000.0
+                for r in sim.all_requests:
+                    if r.finish_time >= 0.0 and not r.timed_out:
+                        lat_ms = r.latency * 1000.0
+                        eff_latencies_ms.append(min(lat_ms, timeout_ms))
+                    else:
+                        eff_latencies_ms.append(timeout_ms)
+
+                p50_eff = float(np.percentile(eff_latencies_ms, 50))
+                p95_eff = float(np.percentile(eff_latencies_ms, 95))
+                p99_eff = float(np.percentile(eff_latencies_ms, 99))
+
+                pol_dict["n_total"] = n_total
+                pol_dict["timeout_pct"] = round(timeout_pct, 2)
+                pol_dict["slo_ok_pct"] = round(slo_ok_pct, 2)
+                pol_dict["p50_eff"] = round(p50_eff, 2)
+                pol_dict["p95_eff"] = round(p95_eff, 2)
+                pol_dict["p99_eff"] = round(p99_eff, 2)
+                pol_dict["latency"]["p50_eff_ms"] = round(p50_eff, 2)
+                pol_dict["latency"]["p95_eff_ms"] = round(p95_eff, 2)
+                pol_dict["latency"]["p99_eff_ms"] = round(p99_eff, 2)
+
+                mult_results[pol] = pol_dict
             except Exception as ex:
                 print(f"    SKIP {pol} at {label}: {ex}")
 
         ranked = sorted(
             mult_results.items(),
-            key=lambda item: (item[1]["latency"]["p99_ms"], -item[1]["goodput_req_per_s"])
+            key=lambda item: (-item[1]["slo_ok_pct"], item[1]["p95_eff"])
         )
         p99_values = [v["latency"]["p99_ms"] for v in mult_results.values() if v]
         by_rho[label] = {
@@ -425,17 +463,17 @@ def precompute():
             "worst_p99": max(p99_values) if p99_values else 0
         }
 
-    # B3: headline.json best/worst p99 and Jain come from rho 0.6
-    flat_results = by_rho["0.6"]["results"]
-    flat_ranked = by_rho["0.6"]["ranking"]
+    # D2: Default displayed rho = 0.4
+    flat_results = by_rho["0.4"]["results"]
+    flat_ranked = by_rho["0.4"]["ranking"]
     by_rho["overload"] = by_rho["1.1"]
 
     p_shootout = {
         "id": "policy_shootout",
         "title": "Comprehensive Policy Shootout",
         "description": (
-            f"EPA full trace (N={n_epa}), c=1, max_requests=None. 6 policies at rho 0.4 and 0.6, "
-            f"with rho 1.1 as overload entry. Default metrics from rho 0.6."
+            f"EPA full trace (N={n_epa}), c=1, max_requests=None. 6 policies at rho 0.3, 0.4, 0.6, "
+            f"with rho 1.1 as overload entry. Default metrics from rho 0.4."
         ),
         "config": {
             "trace_name": "epa",

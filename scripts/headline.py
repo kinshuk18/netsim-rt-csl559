@@ -51,28 +51,36 @@ def generate_headlines():
     rho_break_val = _rho(breaking)
     knee_search_range = [round(float(rho_min), 4), round(float(rho_break_val), 4)]
 
-    # 2. Policy Shootout (B3: from rho 0.6)
+    # 2. Policy Shootout (D3: from default rho 0.4)
     shootout_path = presets_dir / "policy_shootout.json"
     with open(shootout_path) as f:
         shootout_full = json.load(f)
 
-    if "by_rho" in shootout_full and "0.6" in shootout_full["by_rho"]:
-        shootout_data = shootout_full["by_rho"]["0.6"]["results"]
-    elif "per_rho" in shootout_full and "0.6" in shootout_full["per_rho"]:
-        entry = shootout_full["per_rho"]["0.6"]
+    default_rho = "0.4"
+    if "by_rho" in shootout_full and default_rho in shootout_full["by_rho"]:
+        shootout_data = shootout_full["by_rho"][default_rho]["results"]
+    elif "per_rho" in shootout_full and default_rho in shootout_full["per_rho"]:
+        entry = shootout_full["per_rho"][default_rho]
         shootout_data = entry.get("results", entry)
     else:
         shootout_data = shootout_full["results"]
 
     by_multiplier = shootout_full.get("by_multiplier", {})
 
-    p99_sorted = sorted(shootout_data.items(), key=lambda item: item[1]["latency"]["p99_ms"])
-    best_p99_pol, best_p99_res = p99_sorted[0]
-    worst_p99_pol, worst_p99_res = p99_sorted[-1]
+    slo_sorted = sorted(
+        shootout_data.items(),
+        key=lambda item: (-item[1].get("slo_ok_pct", 0), item[1].get("p95_eff", item[1]["latency"]["p95_ms"]))
+    )
+    best_slo_pol, best_slo_res = slo_sorted[0]
+    worst_slo_pol, worst_slo_res = slo_sorted[-1]
 
     jain_sorted = sorted(shootout_data.items(), key=lambda item: item[1]["jains_fairness_index"], reverse=True)
     best_jain_pol, best_jain_res = jain_sorted[0]
     worst_jain_pol, worst_jain_res = jain_sorted[-1]
+
+    p99_sorted = sorted(shootout_data.items(), key=lambda item: item[1]["latency"]["p99_ms"])
+    best_p99_pol, best_p99_res = p99_sorted[0]
+    worst_p99_pol, worst_p99_res = p99_sorted[-1]
 
     # 3. Outage Recovery
     outage_path = presets_dir / "outage_recovery.json"
@@ -124,10 +132,21 @@ def generate_headlines():
             }
         },
         "shootout": {
-            "best_p99": {"policy": best_p99_pol, "p99_ms": best_p99_res["latency"]["p99_ms"]},
-            "worst_p99": {"policy": worst_p99_pol, "p99_ms": worst_p99_res["latency"]["p99_ms"]},
+            "default_rho": 0.4,
+            "best_slo": {
+                "policy": best_slo_pol,
+                "slo_ok_pct": best_slo_res.get("slo_ok_pct", 0),
+                "p95_eff_ms": best_slo_res.get("p95_eff", 0)
+            },
+            "worst_slo": {
+                "policy": worst_slo_pol,
+                "slo_ok_pct": worst_slo_res.get("slo_ok_pct", 0),
+                "p95_eff_ms": worst_slo_res.get("p95_eff", 0)
+            },
             "best_fairness": {"policy": best_jain_pol, "jain_index": best_jain_res["jains_fairness_index"]},
-            "worst_fairness": {"policy": worst_jain_pol, "jain_index": worst_jain_res["jains_fairness_index"]}
+            "worst_fairness": {"policy": worst_jain_pol, "jain_index": worst_jain_res["jains_fairness_index"]},
+            "best_p99": {"policy": best_p99_pol, "p99_ms": best_p99_res["latency"]["p99_ms"]},
+            "worst_p99": {"policy": worst_p99_pol, "p99_ms": worst_p99_res["latency"]["p99_ms"]}
         },
         "outage_recovery": {
             "event": "Outage injection on NASA Jul95 real arrivals (downtime 600-720s trace)",
@@ -186,7 +205,7 @@ def generate_headlines():
         f"Knee:       rho={knee_rho:.4f}, offered={_offered(knee):.4f} req/s, mult={knee.get('load_multiplier') or 0:.1f}x, p99={knee_p99:.1f}ms",
         f"Inflection: rho={_rho(inflection):.4f}, offered={_offered(inflection):.4f} req/s, mult={inflection.get('load_multiplier') or 0:.1f}x, p99={inf_p99:.1f}ms",
         f"Breaking:   rho={break_rho:.4f}, offered={_offered(breaking):.4f} req/s, mult={breaking.get('load_multiplier') or 0:.1f}x, p99={brk_p99:.1f}ms ({breaking.get('reason')})",
-        f"Shootout p99: Best={best_p99_pol.upper()} ({best_p99_res['latency']['p99_ms']:.1f}ms) | Worst={worst_p99_pol.upper()} ({worst_p99_res['latency']['p99_ms']:.1f}ms)",
+        f"Shootout SLO: Best={best_slo_pol.upper()} ({best_slo_res.get('slo_ok_pct', 0):.2f}%, p95_eff={best_slo_res.get('p95_eff', 0):.1f}ms) | Worst={worst_slo_pol.upper()} ({worst_slo_res.get('slo_ok_pct', 0):.2f}%, p95_eff={worst_slo_res.get('p95_eff', 0):.1f}ms)",
         f"Shootout Jain: Best={best_jain_pol.upper()} ({best_jain_res['jains_fairness_index']:.3f}) | Worst={worst_jain_pol.upper()} ({worst_jain_res['jains_fairness_index']:.3f})",
         f"Outage Recovery: drain_time={drain_time_s:.3f}s, peak_backlog={outage_res.get('peak_backlog', 0)}",
         f"Retry Storm: Amplification={amplification:.3f}x | Collapse={collapse_threshold_str}",

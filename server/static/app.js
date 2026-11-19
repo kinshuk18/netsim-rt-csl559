@@ -130,16 +130,22 @@ function renderShootoutPreset(results, ranking) {
   document.getElementById("preset-chart-caption").textContent = "What am I looking at: Comparative bar chart of tail latency (p99) and starvation delay (max wait) across policies.";
 
   // Table
-  let html = `<table><thead><tr><th>Policy</th><th>Throughput (req/s)</th><th>Goodput (req/s)</th><th>p50 (ms)</th><th>p99 (ms)</th><th>Max Wait (ms)</th><th>Fairness</th><th>Utilization</th></tr></thead><tbody>`;
+  let html = `<table><thead><tr><th>Policy</th><th>slo_ok_pct</th><th>p95_eff</th><th>timeout_pct</th><th>p99 (completed only)</th><th>Throughput (req/s)</th><th>Goodput (req/s)</th><th>p50 (ms)</th><th>Max Wait (ms)</th><th>Fairness</th><th>Utilization</th></tr></thead><tbody>`;
   policies.forEach(p => {
     const r = results[p];
     if (r) {
+      const slo = r.slo_ok_pct !== undefined ? `${r.slo_ok_pct.toFixed(2)}%` : `${r.slo_attainment_pct.toFixed(2)}%`;
+      const p95eff = r.p95_eff !== undefined ? `${r.p95_eff.toFixed(1)} ms` : `${r.latency.p95_ms.toFixed(1)} ms`;
+      const tout = r.timeout_pct !== undefined ? `${r.timeout_pct.toFixed(2)}%` : `${(r.timeout_rate * 100).toFixed(2)}%`;
       html += `<tr>
         <td><strong>${p.toUpperCase()}</strong></td>
+        <td>${slo}</td>
+        <td>${p95eff}</td>
+        <td>${tout}</td>
+        <td>${r.latency.p99_ms.toFixed(1)}</td>
         <td>${r.throughput_req_per_s.toFixed(1)}</td>
         <td>${r.goodput_req_per_s.toFixed(1)}</td>
         <td>${r.latency.p50_ms.toFixed(1)}</td>
-        <td>${r.latency.p99_ms.toFixed(1)}</td>
         <td>${r.wait_time.max_ms.toFixed(1)}</td>
         <td>${r.jains_fairness_index.toFixed(3)}</td>
         <td>${(r.server_utilization * 100).toFixed(1)}%</td>
@@ -415,12 +421,18 @@ function renderShootoutResults(results, ranking) {
     ]
   });
 
-  let html = `<table><thead><tr><th>Rank</th><th>Policy</th><th>p99 Latency (ms)</th><th>p50 Latency (ms)</th><th>Max Wait (ms)</th><th>Goodput (req/s)</th><th>Fairness Index</th></tr></thead><tbody>`;
+  let html = `<table><thead><tr><th>Rank</th><th>Policy</th><th>slo_ok_pct</th><th>p95_eff</th><th>timeout_pct</th><th>p99 (completed only)</th><th>p50 Latency (ms)</th><th>Max Wait (ms)</th><th>Goodput (req/s)</th><th>Fairness Index</th></tr></thead><tbody>`;
   policies.forEach((p, idx) => {
     const r = results[p];
+    const slo = r.slo_ok_pct !== undefined ? `${r.slo_ok_pct.toFixed(2)}%` : (r.slo_attainment_pct !== undefined ? `${r.slo_attainment_pct.toFixed(2)}%` : '-');
+    const p95eff = r.p95_eff !== undefined ? `${r.p95_eff.toFixed(1)} ms` : (r.latency && r.latency.p95_ms ? `${r.latency.p95_ms.toFixed(1)} ms` : '-');
+    const tout = r.timeout_pct !== undefined ? `${r.timeout_pct.toFixed(2)}%` : (r.timeout_rate !== undefined ? `${(r.timeout_rate * 100).toFixed(2)}%` : '-');
     html += `<tr>
       <td>#${idx + 1}</td>
       <td><strong>${p.toUpperCase()}</strong></td>
+      <td>${slo}</td>
+      <td>${p95eff}</td>
+      <td>${tout}</td>
       <td>${r.latency.p99_ms.toFixed(1)}</td>
       <td>${r.latency.p50_ms.toFixed(1)}</td>
       <td>${r.wait_time.max_ms.toFixed(1)}</td>

@@ -37,6 +37,7 @@ In accordance with academic integrity and rigorous systems engineering practices
    - Policies that require heavy external machine learning libraries (such as PyTorch or TensorFlow) must be evaluated offline or integrated into built-in engine modules.
 
 3. **Client Timeout Semantics (30 s Default)**: Requests unserved after `client_timeout=30.0s` time out in queue (`start_time < 0`), are flagged `timed_out=True` without consuming server service, record latency `-1.0`, and are counted in `timed_out` while being excluded from completed latency metrics (capping non-preemptive completed latency at wait $<30$ s + service $\approx 30002$ ms, whereas preemptive jobs that started before 30 s continue to completion).
+4. **Shootout p99 Incomparability**: Timeouts apply only until service starts; RR/MLFQ start every request within one quantum so none time out and the worst finish at ~187 s; FCFS/SJF drop 715/765 unserved requests (1.5%/1.6%) and exclude them from p99.
 
 ## Latency Floor
 DES matches throughput and ordering of policies; absolute latency differs by the measured floor (~1.0-1.8ms HTTP/IPC overhead not modeled in DES); tail diverges at saturation due to CFS preemption and OS scheduling jitter.

@@ -29,21 +29,32 @@
     }
   },
   "shootout": {
-    "best_p99": {
+    "default_rho": 0.4,
+    "best_slo": {
       "policy": "sjf",
-      "p99_ms": 3003.48
+      "slo_ok_pct": 98.95,
+      "p95_eff_ms": 91.46
     },
-    "worst_p99": {
-      "policy": "mlfq",
-      "p99_ms": 65606.44
+    "worst_slo": {
+      "policy": "static_priority",
+      "slo_ok_pct": 80.77,
+      "p95_eff_ms": 2708.64
     },
     "best_fairness": {
       "policy": "rr",
-      "jain_index": 0.4339
+      "jain_index": 0.1943
     },
     "worst_fairness": {
-      "policy": "srtf",
-      "jain_index": 0.0667
+      "policy": "mlfq",
+      "jain_index": 0.1387
+    },
+    "best_p99": {
+      "policy": "sjf",
+      "p99_ms": 526.14
+    },
+    "worst_p99": {
+      "policy": "static_priority",
+      "p99_ms": 4680.78
     }
   },
   "outage_recovery": {
@@ -56,6 +67,6 @@
     "collapse_threshold": "no metastable collapse observed on this trace"
   },
   "simulation_throughput": {
-    "events_per_second": 270074
+    "events_per_second": 355627
   }
 }
