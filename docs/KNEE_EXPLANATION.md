@@ -38,13 +38,13 @@ The inflection point represents the maximum slope (sign change of the second der
 - $\rho_{\text{inflection}} = 0.4578$
 - $\rho_{\text{breaking}} = 0.3847$
 
-**Inflection > breaking occurs because of queue-cap clipping.** Beyond the breaking point, tail latency accelerates violently before hitting the queue capacity ceiling:
+**Inflection > breaking occurs because of 30 s client timeout plateauing (not drop-tail queue-capacity clipping).** Beyond the breaking point, tail latency accelerates violently before plateauing at the 30 s client timeout threshold:
 - $\rho = 0.3847$ (breaking): $p_{99} = 958.6\text{ ms}$
 - $\rho = 0.4578$ (inflection): $p_{99} = 6711.4\text{ ms}$
 - $\rho = 0.5450$: $p_{99} = 22463.0\text{ ms}$
-- $\rho = 0.6480$: $p_{99} = 30002.0\text{ ms}$ (clipped by client timeout / queue cap)
+- $\rho = 0.6480$: $p_{99} = 30002.0\text{ ms}$ (bounded by 30 s client timeout; queue capacity 50000 was never reached, drop_rate=0.0)
 
-The transition exhibits a sigmoidal profile: steep growth between $\rho = 0.385$ and $\rho = 0.545$, followed by hard clipping at $30002\text{ ms}$ at $\rho \ge 0.648$. The point of maximum slope (inflection) naturally sits in the mid-escalation region ($\rho = 0.458$, $p_{99} = 6711\text{ ms}$), strictly to the right of breaking ($\rho = 0.385$, $p_{99} = 958.6\text{ ms}$).
+The transition exhibits a sigmoidal profile: steep growth between $\rho = 0.385$ and $\rho = 0.545$, followed by an upper plateau at $\sim 30002\text{ ms}$ for $\rho \ge 0.648$ because requests unserved after 30 s time out in queue before starting service and are excluded from completed latency metrics. Completed requests are strictly those waiting $< 30\text{ s}$ plus $\sim 2\text{ ms}$ service time. The point of maximum slope (inflection) naturally sits in the mid-escalation region ($\rho = 0.458$, $p_{99} = 6711\text{ ms}$), strictly to the right of breaking ($\rho = 0.385$, $p_{99} = 958.6\text{ ms}$).
 
 ## Arrival Burstiness: Peak-to-Mean Ratio (PMR)
 
