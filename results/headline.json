@@ -56,6 +56,6 @@
     "collapse_threshold": "no metastable collapse observed on this trace"
   },
   "simulation_throughput": {
-    "events_per_second": 276127
+    "events_per_second": 270074
   }
 }
