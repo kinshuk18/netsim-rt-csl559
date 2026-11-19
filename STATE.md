@@ -11,3 +11,4 @@ OPEN: retry_storm amplification=1.07 < 1.5 at mult=310.0x — not fabricated.
 
 F1 complete: shootout 4-mult, outage injection Jul95, retry_storm sweep, SJF sweep added
 OPEN: retry_storm amplification=1.07 < 1.5 at mult=310x — not fabricated.
+F2 complete: KNEE_EXPLANATION.md + VIVA_QA.md with real computed numbers
