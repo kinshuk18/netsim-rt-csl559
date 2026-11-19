@@ -528,20 +528,23 @@
           "load_multiplier": 67.5395,
           "offered_load_req_per_s": 37.328041,
           "p99_ms": 285.84,
-          "rho": 0.271707
+          "rho": 0.271707,
+          "description": "Knee: onset of non-linear queueing delay expansion (max curvature on rho vs p99, rho<=breaking_rho)"
         },
         "inflection": {
           "load_multiplier": 113.8078,
           "offered_load_req_per_s": 62.899817,
           "p99_ms": 6711.36,
-          "rho": 0.457841
+          "rho": 0.457841,
+          "description": "Inflection point: second-derivative sign change on rho-p99 curve (rho<=1.0)"
         },
         "breaking": {
           "load_multiplier": 95.6388,
           "offered_load_req_per_s": 52.858091,
           "p99_ms": 958.6,
           "rho": 0.384749,
-          "reason": "p99 > SLO"
+          "reason": "both SLO breach and goodput collapse",
+          "description": "Breaking point: system capacity collapse / SLO violation"
         }
       }
     },
@@ -1058,20 +1061,23 @@
           "load_multiplier": 80.3704,
           "offered_load_req_per_s": 44.419481,
           "p99_ms": 252.07,
-          "rho": 0.323325
+          "rho": 0.323325,
+          "description": "Knee: onset of non-linear queueing delay expansion (max curvature on rho vs p99, rho<=breaking_rho)"
         },
         "inflection": {
           "load_multiplier": 135.4285,
           "offered_load_req_per_s": 74.849245,
           "p99_ms": 2151.49,
-          "rho": 0.54482
+          "rho": 0.54482,
+          "description": "Inflection point: second-derivative sign change on rho-p99 curve (rho<=1.0)"
         },
         "breaking": {
           "load_multiplier": 113.8078,
           "offered_load_req_per_s": 62.899817,
           "p99_ms": 1067.28,
           "rho": 0.457841,
-          "reason": "p99 > SLO"
+          "reason": "both SLO breach and goodput collapse",
+          "description": "Breaking point: system capacity collapse / SLO violation"
         }
       }
     }
